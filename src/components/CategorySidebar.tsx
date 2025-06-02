@@ -15,7 +15,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
   return (
     <Card className="shadow-lg sticky top-4">
       <CardContent className="p-4">
-        <h3 className="text-lg font-semibold mb-4 text-gray-900">Категории</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Категорії</h3>
         <div className="space-y-2">
           <button
             onClick={() => onCategoryChange("all")}
@@ -25,7 +25,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
                 : "text-gray-600 hover:bg-gray-100"
             }`}
           >
-            📋 Все услуги
+            📋 Усі послуги
           </button>
           {categories.map((category) => (
             <button

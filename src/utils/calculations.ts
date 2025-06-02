@@ -1,8 +1,8 @@
 
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('ru-RU', {
+  return new Intl.NumberFormat('uk-UA', {
     style: 'currency',
-    currency: 'RUB',
+    currency: 'UAH',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);

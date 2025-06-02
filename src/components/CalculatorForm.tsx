@@ -61,9 +61,9 @@ const CalculatorForm = () => {
       })
       .join('\n');
 
-    console.log('Generated Estimate:');
+    console.log('Згенерований кошторис:');
     console.log(selectedItems);
-    console.log(`\nОбщая стоимость: ${formatCurrency(totalCost)}`);
+    console.log(`\nЗагальна вартість: ${formatCurrency(totalCost)}`);
   };
 
   return (
@@ -82,10 +82,10 @@ const CalculatorForm = () => {
           <CardHeader>
             <CardTitle className="flex items-center text-2xl">
               <Calculator className="mr-3 h-6 w-6" />
-              Выберите услуги
+              Оберіть послуги
               {selectedCategory !== "all" && (
                 <span className="ml-2 text-sm font-normal text-gray-500">
-                  ({filteredServices.length} услуг)
+                  ({filteredServices.length} послуг)
                 </span>
               )}
             </CardTitle>
@@ -113,7 +113,7 @@ const CalculatorForm = () => {
           <CardHeader>
             <CardTitle className="flex items-center text-xl">
               <FileText className="mr-3 h-5 w-5" />
-              Смета проекта
+              Кошторис проекту
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -143,7 +143,7 @@ const CalculatorForm = () => {
               <>
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center text-lg font-bold">
-                    <span>Итого:</span>
+                    <span>Всього:</span>
                     <span className="text-blue-600">{formatCurrency(totalCost)}</span>
                   </div>
                 </div>
@@ -152,14 +152,14 @@ const CalculatorForm = () => {
                   onClick={handleGenerateEstimate}
                   className="w-full bg-blue-600 hover:bg-blue-700"
                 >
-                  Сформировать смету
+                  Сформувати кошторис
                 </Button>
               </>
             )}
             
             {totalCost === 0 && (
               <div className="text-center text-gray-500 py-8">
-                Выберите услуги для расчета стоимости
+                Оберіть послуги для розрахунку вартості
               </div>
             )}
           </CardContent>
