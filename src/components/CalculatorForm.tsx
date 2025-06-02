@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import ServiceCard from "./ServiceCard";
 import CategorySidebar from "./CategorySidebar";
 import { calculateTotal, formatCurrency } from "@/utils/calculations";
-import { constructionServices } from "@/data/services";
-import { Calculator, FileText } from "lucide-react";
+import { constructionServices, categories } from "@/data/services";
+import { Calculator, FileText, Download } from "lucide-react";
+import jsPDF from 'jspdf';
 
 const CalculatorForm = () => {
   const [selectedServices, setSelectedServices] = useState<Record<string, { area: number; selected: boolean }>>({});
@@ -19,6 +20,18 @@ const CalculatorForm = () => {
     }
     return constructionServices.filter(service => service.category === selectedCategory);
   }, [selectedCategory]);
+
+  const groupedServices = useMemo(() => {
+    if (selectedCategory !== "all") {
+      return { [selectedCategory]: filteredServices };
+    }
+    
+    const grouped: Record<string, typeof constructionServices> = {};
+    categories.forEach(category => {
+      grouped[category.id] = constructionServices.filter(service => service.category === category.id);
+    });
+    return grouped;
+  }, [filteredServices, selectedCategory]);
 
   const handleServiceToggle = (serviceId: string, price: number) => {
     const currentService = selectedServices[serviceId] || { area: 0, selected: false };
@@ -50,6 +63,58 @@ const CalculatorForm = () => {
     
     setSelectedServices(updatedServices);
     setTotalCost(calculateTotal(updatedServices, constructionServices));
+  };
+
+  const generatePDF = () => {
+    const pdf = new jsPDF();
+    
+    // Title
+    pdf.setFontSize(20);
+    pdf.text('Кошторис будівельних робіт', 20, 30);
+    
+    // Date
+    pdf.setFontSize(12);
+    const currentDate = new Date().toLocaleDateString('uk-UA');
+    pdf.text(`Дата: ${currentDate}`, 20, 45);
+    
+    let yPosition = 65;
+    pdf.setFontSize(14);
+    pdf.text('Обрані послуги:', 20, yPosition);
+    
+    yPosition += 15;
+    pdf.setFontSize(10);
+    
+    // Selected services
+    Object.entries(selectedServices)
+      .filter(([_, service]) => service.selected && service.area > 0)
+      .forEach(([serviceId, service]) => {
+        const serviceData = constructionServices.find(s => s.id === serviceId);
+        if (serviceData) {
+          const serviceCost = serviceData.price * service.area;
+          const text = `${serviceData.name}: ${service.area} ${serviceData.unit} × ${formatCurrency(serviceData.price)} = ${formatCurrency(serviceCost)}`;
+          
+          if (yPosition > 280) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          pdf.text(text, 20, yPosition);
+          yPosition += 8;
+        }
+      });
+    
+    // Total
+    yPosition += 10;
+    if (yPosition > 280) {
+      pdf.addPage();
+      yPosition = 20;
+    }
+    
+    pdf.setFontSize(14);
+    pdf.text(`Загальна вартість: ${formatCurrency(totalCost)}`, 20, yPosition);
+    
+    // Save PDF
+    pdf.save('kostoris-budivelnykh-robit.pdf');
   };
 
   const handleGenerateEstimate = () => {
@@ -90,19 +155,33 @@ const CalculatorForm = () => {
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredServices.map((service) => (
-                <ServiceCard
-                  key={service.id}
-                  service={service}
-                  isSelected={selectedServices[service.id]?.selected || false}
-                  area={selectedServices[service.id]?.area || 0}
-                  onToggle={() => handleServiceToggle(service.id, service.price)}
-                  onAreaChange={(area) => handleAreaChange(service.id, area, service.price)}
-                />
-              ))}
-            </div>
+          <CardContent className="space-y-8">
+            {Object.entries(groupedServices).map(([categoryId, services]) => {
+              const category = categories.find(c => c.id === categoryId);
+              if (!category || services.length === 0) return null;
+              
+              return (
+                <div key={categoryId} className="space-y-4">
+                  <div className="flex items-center space-x-2 border-b border-gray-200 pb-2">
+                    <span className="text-2xl">{category.icon}</span>
+                    <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+                    <span className="text-sm text-gray-500">({services.length} послуг)</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {services.map((service) => (
+                      <ServiceCard
+                        key={service.id}
+                        service={service}
+                        isSelected={selectedServices[service.id]?.selected || false}
+                        area={selectedServices[service.id]?.area || 0}
+                        onToggle={() => handleServiceToggle(service.id, service.price)}
+                        onAreaChange={(area) => handleAreaChange(service.id, area, service.price)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </CardContent>
         </Card>
       </div>
@@ -148,12 +227,23 @@ const CalculatorForm = () => {
                   </div>
                 </div>
                 
-                <Button 
-                  onClick={handleGenerateEstimate}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  Сформувати кошторис
-                </Button>
+                <div className="space-y-2">
+                  <Button 
+                    onClick={handleGenerateEstimate}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    Сформувати кошторис
+                  </Button>
+                  
+                  <Button 
+                    onClick={generatePDF}
+                    variant="outline"
+                    className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Завантажити PDF
+                  </Button>
+                </div>
               </>
             )}
             
