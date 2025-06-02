@@ -1,10 +1,9 @@
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import ServiceCard from "./ServiceCard";
+import CategorySidebar from "./CategorySidebar";
 import { calculateTotal, formatCurrency } from "@/utils/calculations";
 import { constructionServices } from "@/data/services";
 import { Calculator, FileText } from "lucide-react";
@@ -12,6 +11,14 @@ import { Calculator, FileText } from "lucide-react";
 const CalculatorForm = () => {
   const [selectedServices, setSelectedServices] = useState<Record<string, { area: number; selected: boolean }>>({});
   const [totalCost, setTotalCost] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const filteredServices = useMemo(() => {
+    if (selectedCategory === "all") {
+      return constructionServices;
+    }
+    return constructionServices.filter(service => service.category === selectedCategory);
+  }, [selectedCategory]);
 
   const handleServiceToggle = (serviceId: string, price: number) => {
     const currentService = selectedServices[serviceId] || { area: 0, selected: false };
@@ -60,7 +67,15 @@ const CalculatorForm = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* Category Sidebar */}
+      <div className="lg:col-span-1">
+        <CategorySidebar
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+      </div>
+
       {/* Services Selection */}
       <div className="lg:col-span-2">
         <Card className="shadow-lg">
@@ -68,11 +83,16 @@ const CalculatorForm = () => {
             <CardTitle className="flex items-center text-2xl">
               <Calculator className="mr-3 h-6 w-6" />
               Выберите услуги
+              {selectedCategory !== "all" && (
+                <span className="ml-2 text-sm font-normal text-gray-500">
+                  ({filteredServices.length} услуг)
+                </span>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {constructionServices.map((service) => (
+              {filteredServices.map((service) => (
                 <ServiceCard
                   key={service.id}
                   service={service}
@@ -97,7 +117,7 @@ const CalculatorForm = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-96 overflow-y-auto">
               {Object.entries(selectedServices)
                 .filter(([_, service]) => service.selected && service.area > 0)
                 .map(([serviceId, service]) => {
