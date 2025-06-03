@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -232,11 +231,6 @@ const CalculatorForm = () => {
               <CardTitle className="flex items-center text-2xl">
                 <Calculator className="mr-3 h-6 w-6" />
                 Оберіть послуги
-                {selectedCategory !== "all" && (
-                  <span className="ml-2 text-sm font-normal text-gray-500">
-                    ({filteredServices.length} послуг)
-                  </span>
-                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-8">
@@ -249,7 +243,6 @@ const CalculatorForm = () => {
                     <div className="flex items-center space-x-2 border-b border-gray-200 pb-2">
                       <span className="text-2xl">{category.icon}</span>
                       <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
-                      <span className="text-sm text-gray-500">({services.length} послуг)</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {services.map((service) => (
