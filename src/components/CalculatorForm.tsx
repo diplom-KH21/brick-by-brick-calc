@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useRef } from "react";
 import ServiceList, { ServiceListRef } from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
@@ -7,6 +8,8 @@ import { formatCurrency } from "@/utils/calculations";
 import { generatePDF } from "@/utils/pdfGenerator";
 import { constructionServices } from "@/data/services";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
 
 const CalculatorForm = () => {
   const [selectedServices, setSelectedServices] = useState<Record<string, number>>({});
@@ -113,9 +116,11 @@ const CalculatorForm = () => {
     });
   };
 
+  const selectedItemsCount = Object.entries(selectedServices).filter(([_, area]) => area > 0).length;
+
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
         <div className="lg:col-span-1">
           <CategorySidebar
             selectedCategory={selectedCategory}
@@ -143,6 +148,20 @@ const CalculatorForm = () => {
           />
         </div>
       </div>
+
+      {/* Mobile sticky estimate button */}
+      {totalCost > 0 && (
+        <div className="lg:hidden fixed bottom-4 left-4 right-4 z-40">
+          <Button 
+            onClick={handleGenerateEstimate}
+            className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg"
+            size="lg"
+          >
+            <FileText className="mr-2 h-5 w-5" />
+            Переглянути кошторис ({selectedItemsCount} послуг) - {formatCurrency(totalCost)}
+          </Button>
+        </div>
+      )}
 
       <EstimateTable
         ref={estimateRef}

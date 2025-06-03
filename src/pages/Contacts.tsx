@@ -1,7 +1,6 @@
 
 import { Building2, Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 const Contacts = () => {
   const contactInfo = [
@@ -37,10 +36,10 @@ const Contacts = () => {
               <Building2 className="h-8 w-8 text-blue-600" />
               <h1 className="text-2xl font-bold text-gray-900">БудКалькулятор</h1>
             </div>
-            <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-600 hover:text-blue-600 transition-colors">Послуги</a>
-              <a href="/about" className="text-gray-600 hover:text-blue-600 transition-colors">Про нас</a>
-              <a href="/contacts" className="text-blue-600 font-medium">Контакти</a>
+            <nav className="flex space-x-4 md:space-x-8">
+              <a href="/" className="text-gray-600 hover:text-blue-600 transition-colors text-sm md:text-base">Послуги</a>
+              <a href="/about" className="text-gray-600 hover:text-blue-600 transition-colors text-sm md:text-base">Про нас</a>
+              <a href="/contacts" className="text-blue-600 font-medium text-sm md:text-base">Контакти</a>
             </nav>
           </div>
         </div>
@@ -90,20 +89,6 @@ const Contacts = () => {
                   <p><strong>Науковий керівник:</strong> к.т.н., доцент кафедри</p>
                   <p><strong>Рік захисту:</strong> 2024</p>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Contact */}
-            <Card>
-              <CardContent className="p-6 text-center">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Зворотний зв'язок</h3>
-                <p className="text-gray-600 mb-4">
-                  Маєте питання щодо проекту або пропозиції по вдосконаленню? Буду радий отримати ваш відгук!
-                </p>
-                <Button size="lg" className="bg-green-600 hover:bg-green-700">
-                  <Mail className="h-5 w-5 mr-2" />
-                  Написати листа
-                </Button>
               </CardContent>
             </Card>
           </div>

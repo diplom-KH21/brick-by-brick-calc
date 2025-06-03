@@ -1,3 +1,4 @@
+
 import CalculatorForm from "@/components/CalculatorForm";
 import BackgroundScraper from "@/components/BackgroundScraper";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -17,10 +18,10 @@ const Index = () => {
               <Building2 className="h-8 w-8 text-blue-600" />
               <h1 className="text-2xl font-bold text-gray-900">БудКалькулятор</h1>
             </div>
-            <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-600 hover:text-blue-600 transition-colors">Послуги</a>
-              <a href="/about" className="text-gray-600 hover:text-blue-600 transition-colors">Про нас</a>
-              <a href="/contacts" className="text-gray-600 hover:text-blue-600 transition-colors">Контакти</a>
+            <nav className="flex space-x-4 md:space-x-8">
+              <a href="/" className="text-blue-600 font-medium text-sm md:text-base">Послуги</a>
+              <a href="/about" className="text-gray-600 hover:text-blue-600 transition-colors text-sm md:text-base">Про нас</a>
+              <a href="/contacts" className="text-gray-600 hover:text-blue-600 transition-colors text-sm md:text-base">Контакти</a>
             </nav>
           </div>
         </div>

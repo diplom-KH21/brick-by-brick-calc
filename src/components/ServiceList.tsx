@@ -68,14 +68,14 @@ const ServiceList = forwardRef<ServiceListRef, ServiceListProps>(({
 
   return (
     <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center text-2xl">
-          <Calculator className="mr-3 h-6 w-6" />
+      <CardHeader className="pb-4 md:pb-6">
+        <CardTitle className="flex items-center text-xl md:text-2xl">
+          <Calculator className="mr-2 md:mr-3 h-5 w-5 md:h-6 md:w-6" />
           Оберіть послуги
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-8">
+      <CardContent className="pt-0">
+        <div className="space-y-6 md:space-y-8">
           {servicesByCategory.map(({ category, services }) => (
             <div
               key={category.id}
@@ -83,13 +83,13 @@ const ServiceList = forwardRef<ServiceListRef, ServiceListProps>(({
                 if (el) categoryRefs.current[category.id] = el;
               }}
               data-category-id={category.id}
-              className="space-y-4"
+              className="space-y-3 md:space-y-4"
             >
               <div className="flex items-center space-x-2 border-b border-gray-200 pb-2">
-                <span className="text-2xl">{category.icon}</span>
-                <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+                <span className="text-xl md:text-2xl">{category.icon}</span>
+                <h3 className="text-base md:text-lg font-semibold text-gray-900">{category.name}</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-4">
                 {services.map((service) => (
                   <ServiceCard
                     key={service.id}
