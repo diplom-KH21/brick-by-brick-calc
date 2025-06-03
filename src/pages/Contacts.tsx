@@ -1,25 +1,9 @@
 
-import { Building2, Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
+import { Building2, Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 
 const Contacts = () => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-
   const contactInfo = [
     {
       icon: <Phone className="h-6 w-6 text-blue-600" />,
@@ -29,7 +13,7 @@ const Contacts = () => {
     {
       icon: <Mail className="h-6 w-6 text-blue-600" />,
       title: "Email",
-      details: ["info@budkalculator.ua", "support@budkalculator.ua"]
+      details: ["vlad.korobeckij@gmail.com", "support@budkalculator.ua"]
     },
     {
       icon: <MapPin className="h-6 w-6 text-blue-600" />,
@@ -42,76 +26,6 @@ const Contacts = () => {
       details: ["Пн-Пт: 9:00 - 18:00", "Сб: 10:00 - 16:00", "Нд: вихідний"]
     }
   ];
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.firstName || !formData.phone || !formData.message) {
-      toast({
-        title: "Помилка",
-        description: "Заповніть всі обов'язкові поля",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const emailBody = `
-Нова заявка з БудКалькулятора
-
-Ім'я: ${formData.firstName} ${formData.lastName}
-Телефон: ${formData.phone}
-Email: ${formData.email || 'Не вказано'}
-Тема: ${formData.subject || 'Не вказано'}
-
-Повідомлення:
-${formData.message}
-
-Дата: ${new Date().toLocaleDateString('uk-UA')} ${new Date().toLocaleTimeString('uk-UA')}
-      `.trim();
-
-      // Create mailto link
-      const mailtoLink = `mailto:vlad.korobeckij@gmail.com?subject=${encodeURIComponent(`Заявка з БудКалькулятора: ${formData.subject || 'Без теми'}`)}&body=${encodeURIComponent(emailBody)}`;
-      
-      // Open email client
-      window.location.href = mailtoLink;
-
-      // Reset form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
-
-      toast({
-        title: "Заявку відправлено",
-        description: "Ваше повідомлення буде відправлено через email-клієнт",
-      });
-
-    } catch (error) {
-      console.error('Помилка відправки:', error);
-      toast({
-        title: "Помилка відправки",
-        description: "Спробуйте ще раз або зв'яжіться з нами за телефоном",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
@@ -142,7 +56,7 @@ ${formData.message}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto">
           {/* Contact Information */}
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Як з нами зв'язатися</h2>
@@ -165,121 +79,8 @@ ${formData.message}
               </Card>
             ))}
 
-            {/* Map placeholder */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Наше розташування</h3>
-                <div className="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <MapPin className="h-12 w-12 mx-auto mb-2" />
-                    <p>Інтерактивна карта</p>
-                    <p className="text-sm">вул. Хрещатик, 22, Київ</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Contact Form */}
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
-                  Залишити повідомлення
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName">Ім'я *</Label>
-                      <Input 
-                        id="firstName" 
-                        name="firstName"
-                        placeholder="Ваше ім'я" 
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName">Прізвище</Label>
-                      <Input 
-                        id="lastName" 
-                        name="lastName"
-                        placeholder="Ваше прізвище" 
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="phone">Телефон *</Label>
-                    <Input 
-                      id="phone" 
-                      name="phone"
-                      placeholder="+38 (___) ___-__-__" 
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email" 
-                      name="email"
-                      type="email" 
-                      placeholder="your@email.com" 
-                      value={formData.email}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="subject">Тема звернення</Label>
-                    <Input 
-                      id="subject" 
-                      name="subject"
-                      placeholder="Коротко опишіть тему" 
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="message">Повідомлення *</Label>
-                    <Textarea 
-                      id="message" 
-                      name="message"
-                      placeholder="Детально опишіть ваш проект або питання..."
-                      rows={5}
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Відправляємо..." : "Відправити повідомлення"}
-                  </Button>
-
-                  <p className="text-sm text-gray-500 text-center">
-                    * Обов'язкові поля для заповнення
-                  </p>
-                </form>
-              </CardContent>
-            </Card>
-
             {/* Quick Contact */}
-            <Card className="mt-6">
+            <Card>
               <CardContent className="p-6 text-center">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Швидкий зв'язок</h3>
                 <p className="text-gray-600 mb-4">
@@ -289,6 +90,24 @@ ${formData.message}
                   <Phone className="h-5 w-5 mr-2" />
                   Зателефонувати зараз
                 </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Map placeholder */}
+          <div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Наше розташування</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="bg-gray-200 h-96 rounded-lg flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <MapPin className="h-12 w-12 mx-auto mb-2" />
+                    <p>Інтерактивна карта</p>
+                    <p className="text-sm">вул. Хрещатик, 22, Київ</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
