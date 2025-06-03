@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,11 +7,13 @@ import { calculateTotal, formatCurrency } from "@/utils/calculations";
 import { constructionServices, categories } from "@/data/services";
 import { Calculator, FileText, Download } from "lucide-react";
 import jsPDF from 'jspdf';
+import { useToast } from "@/hooks/use-toast";
 
 const CalculatorForm = () => {
   const [selectedServices, setSelectedServices] = useState<Record<string, { area: number; selected: boolean }>>({});
   const [totalCost, setTotalCost] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const { toast } = useToast();
 
   const filteredServices = useMemo(() => {
     if (selectedCategory === "all") {
@@ -130,11 +131,27 @@ const CalculatorForm = () => {
     
     // Save PDF
     pdf.save('kostoris-budivelnykh-robit.pdf');
+    
+    toast({
+      title: "PDF згенеровано",
+      description: "Кошторис успішно завантажено у форматі PDF",
+    });
   };
 
   const handleGenerateEstimate = () => {
     const selectedItems = Object.entries(selectedServices)
-      .filter(([_, service]) => service.selected && service.area > 0)
+      .filter(([_, service]) => service.selected && service.area > 0);
+
+    if (selectedItems.length === 0) {
+      toast({
+        title: "Помилка",
+        description: "Оберіть хоча б одну послугу для формування кошторису",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const estimateText = selectedItems
       .map(([serviceId, service]) => {
         const serviceData = constructionServices.find(s => s.id === serviceId);
         return `${serviceData?.name}: ${service.area} ${serviceData?.unit} × ${formatCurrency(serviceData?.price || 0)} = ${formatCurrency((serviceData?.price || 0) * service.area)}`;
@@ -142,8 +159,37 @@ const CalculatorForm = () => {
       .join('\n');
 
     console.log('Згенерований кошторис:');
-    console.log(selectedItems);
+    console.log(estimateText);
     console.log(`\nЗагальна вартість: ${formatCurrency(totalCost)}`);
+
+    // Create a detailed estimate summary
+    const estimateSummary = `
+КОШТОРИС БУДІВЕЛЬНИХ РОБІТ
+Дата: ${new Date().toLocaleDateString('uk-UA')}
+
+Обрані послуги:
+${estimateText}
+
+Загальна вартість: ${formatCurrency(totalCost)}
+    `.trim();
+
+    // Show success toast with estimate info
+    toast({
+      title: "Кошторис сформовано",
+      description: `Обрано ${selectedItems.length} послуг на суму ${formatCurrency(totalCost)}`,
+    });
+
+    // Copy to clipboard as well
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(estimateSummary).then(() => {
+        toast({
+          title: "Скопійовано",
+          description: "Кошторис скопійовано в буфер обміну",
+        });
+      }).catch(() => {
+        console.log('Не вдалося скопіювати в буфер обміну');
+      });
+    }
   };
 
   return (
