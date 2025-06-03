@@ -6,11 +6,13 @@ import { categories } from "@/data/services";
 interface CategorySidebarProps {
   selectedCategory: string;
   onCategoryChange: (categoryId: string) => void;
+  onCategoryClick: (categoryId: string) => void;
 }
 
 const CategorySidebar: React.FC<CategorySidebarProps> = ({
   selectedCategory,
   onCategoryChange,
+  onCategoryClick,
 }) => {
   return (
     <Card className="shadow-lg">
@@ -20,7 +22,8 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
           {categories.map((category) => (
             <div
               key={category.id}
-              className={`px-3 py-2 rounded-md transition-colors ${
+              onClick={() => onCategoryClick(category.id)}
+              className={`px-3 py-2 rounded-md transition-colors cursor-pointer hover:bg-gray-100 ${
                 selectedCategory === category.id
                   ? "bg-blue-100 text-blue-700 font-medium border-l-4 border-blue-500"
                   : "text-gray-600"

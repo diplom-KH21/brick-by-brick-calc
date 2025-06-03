@@ -16,6 +16,7 @@ const CalculatorForm = () => {
   const [showEstimate, setShowEstimate] = useState(false);
   const { toast } = useToast();
   const estimateRef = useRef<HTMLDivElement>(null);
+  const serviceListRef = useRef<any>(null);
 
   const handleAreaChange = (serviceId: string, area: number) => {
     const updatedServices = {
@@ -46,6 +47,12 @@ const CalculatorForm = () => {
     }, 0);
     
     setTotalCost(total);
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    if (serviceListRef.current && serviceListRef.current.onScrollToCategory) {
+      serviceListRef.current.onScrollToCategory(categoryId);
+    }
   };
 
   const handleGeneratePDF = () => {
@@ -114,14 +121,17 @@ const CalculatorForm = () => {
           <CategorySidebar
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
+            onCategoryClick={handleCategoryClick}
           />
         </div>
 
         <div className="lg:col-span-2">
           <ServiceList
+            ref={serviceListRef}
             selectedServices={selectedServices}
             onAreaChange={handleAreaChange}
             onCategoryChange={setSelectedCategory}
+            onScrollToCategory={() => {}}
           />
         </div>
 
