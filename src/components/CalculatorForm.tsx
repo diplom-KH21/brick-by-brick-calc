@@ -116,7 +116,7 @@ const CalculatorForm = () => {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="lg:col-span-1 lg:sticky lg:top-4 lg:self-start">
+        <div className="lg:col-span-1">
           <CategorySidebar
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
