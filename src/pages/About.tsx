@@ -1,190 +1,76 @@
 
-import { Building2, Users, Award, Clock, CheckCircle, Phone, Mail, MapPin } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Navigation from "@/components/Navigation";
+import { Building2, Users, Award, Clock } from "lucide-react";
 
 const About = () => {
-  const features = [
-    {
-      icon: <Users className="h-8 w-8 text-blue-600" />,
-      title: "Студентський проект",
-      description: "Дипломна робота з розробки сучасного веб-додатку для розрахунку будівельних робіт"
-    },
-    {
-      icon: <Award className="h-8 w-8 text-blue-600" />,
-      title: "Сучасні технології",
-      description: "Використання найновіших веб-технологій та бібліотек для створення зручного інтерфейсу"
-    },
-    {
-      icon: <Clock className="h-8 w-8 text-blue-600" />,
-      title: "Інноваційний підхід",
-      description: "Розробка зручного калькулятора для швидкого розрахунку вартості будівельних послуг"
-    },
-    {
-      icon: <CheckCircle className="h-8 w-8 text-blue-600" />,
-      title: "Практичне застосування",
-      description: "Реальна можливість використання для планування ремонтних робіт"
-    }
-  ];
-
-  const techSpecs = [
-    // Row 1
-    { name: "React", description: "Фронтенд фреймворк" },
-    { name: "TypeScript", description: "Типізована мова програмування" },
-    { name: "Tailwind CSS", description: "Система стилізації" },
-    { name: "Vite", description: "Інструмент збірки" },
-    // Row 2
-    { name: "shadcn/ui", description: "Бібліотека компонентів" },
-    { name: "Lucide", description: "Набір іконок" },
-    { name: "jsPDF", description: "Генерація PDF" },
-    { name: "React Router", description: "Маршрутизація" },
-    // Row 3
-    { name: "React Query", description: "Управління станом" },
-    { name: "React Hook Form", description: "Робота з формами" },
-    { name: "Zod", description: "Валідація даних" },
-    { name: "Date-fns", description: "Робота з датами" }
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Building2 className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">БудКалькулятор</h1>
-            </div>
-            <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-600 hover:text-blue-600 transition-colors">Послуги</a>
-              <a href="/about" className="text-blue-600 font-medium">Про нас</a>
-              <a href="/contacts" className="text-gray-600 hover:text-blue-600 transition-colors">Контакти</a>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">Про проект</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Це дипломна робота Владислава Романовича Коробецького, група КН-21, 
-            Технологічний університет "КРОК". Проект присвячений створенню сучасного 
-            веб-додатку для розрахунку вартості будівельних та ремонтних робіт.
+      <Navigation />
+      
+      {/* Hero Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">
+            Про БудКалькулятор
+          </h1>
+          <p className="text-xl text-gray-600 mb-12">
+            Ми допомагаємо планувати та розраховувати вартість будівельних робіт з 2015 року
           </p>
         </div>
+      </section>
 
-        {/* Project Info */}
-        <Card className="mb-12">
-          <CardHeader>
-            <CardTitle className="text-2xl">Опис проекту</CardTitle>
-          </CardHeader>
-          <CardContent className="text-gray-600 leading-relaxed">
-            <p className="mb-4">
-              <strong>Автор:</strong> Владислав Романович Коробецький<br/>
-              <strong>Група:</strong> КН-21<br/>
-              <strong>Навчальний заклад:</strong> Технологічний університет "КРОК"<br/>
-              <strong>Тип роботи:</strong> Дипломний проект
-            </p>
-            <p className="mb-4">
-              Даний веб-додаток розроблений як частина дипломної роботи і демонструє навички 
-              створення сучасних веб-застосунків з використанням передових технологій розробки.
-            </p>
-            <p className="mb-4">
-              Проект включає в себе інтерактивний калькулятор для розрахунку вартості різних 
-              видів будівельних робіт, зручний інтерфейс користувача та можливість генерації 
-              детального кошторису у форматі PDF.
-            </p>
-            <p>
-              Використані технології: React, TypeScript, Tailwind CSS, shadcn/ui, Vite та інші 
-              сучасні інструменти веб-розробки.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Contact Information */}
-        <Card className="mb-12">
-          <CardHeader>
-            <CardTitle className="text-2xl">Контактна інформація</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-blue-600" />
-                <span>+380965365381</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-blue-600" />
-                <span>vlad.korobeckij@gmail.com</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <MapPin className="h-5 w-5 text-blue-600" />
-                <span>вул. Лесі Українки 40a Дніпро, 49006</span>
-              </div>
+      {/* Features Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-lg shadow-md text-center">
+              <Building2 className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-3">Досвід</h3>
+              <p className="text-gray-600">
+                Понад 8 років досвіду в будівельній галузі та розробці кошторисів
+              </p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {features.map((feature, index) => (
-            <Card key={index} className="text-center">
-              <CardContent className="pt-6">
-                <div className="flex justify-center mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm">{feature.description}</p>
-              </CardContent>
-            </Card>
-          ))}
+            
+            <div className="bg-white p-8 rounded-lg shadow-md text-center">
+              <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-3">Команда</h3>
+              <p className="text-gray-600">
+                Професійна команда будівельників та інженерів-кошторисників
+              </p>
+            </div>
+            
+            <div className="bg-white p-8 rounded-lg shadow-md text-center">
+              <Award className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-3">Якість</h3>
+              <p className="text-gray-600">
+                Гарантуємо точність розрахунків та актуальність цін на ринку
+              </p>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Technical Info - 3 rows of 4 items */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl text-center">Технічні характеристики</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {/* Row 1 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-                {techSpecs.slice(0, 4).map((tech, index) => (
-                  <div key={index}>
-                    <div className="text-3xl font-bold text-blue-600 mb-2">{tech.name}</div>
-                    <div className="text-gray-600">{tech.description}</div>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Row 2 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-                {techSpecs.slice(4, 8).map((tech, index) => (
-                  <div key={index}>
-                    <div className="text-3xl font-bold text-blue-600 mb-2">{tech.name}</div>
-                    <div className="text-gray-600">{tech.description}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Row 3 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-                {techSpecs.slice(8, 12).map((tech, index) => (
-                  <div key={index}>
-                    <div className="text-3xl font-bold text-blue-600 mb-2">{tech.name}</div>
-                    <div className="text-gray-600">{tech.description}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Mission Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">Наша місія</h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Зробити планування будівельних робіт простим, прозорим та доступним для кожного. 
+            Ми віримо, що кожен має право знати точну вартість робіт ще до їх початку.
+          </p>
+          <div className="flex items-center justify-center">
+            <Clock className="h-8 w-8 text-blue-600 mr-3" />
+            <span className="text-lg font-medium text-gray-900">
+              Економимо ваш час та гроші з 2015 року
+            </span>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 mt-16">
+      <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400">© 2024 Дипломна робота Владислава Коробецького. Технологічний університет "КРОК".</p>
+          <p className="text-gray-400">© 2024 БудКалькулятор. Всі права захищені.</p>
         </div>
       </footer>
     </div>

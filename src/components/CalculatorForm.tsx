@@ -149,15 +149,15 @@ const CalculatorForm = () => {
         </div>
       </div>
 
-      {/* Mobile sticky estimate button */}
+      {/* Mobile sticky estimate button - reduced by 10% and positioned higher */}
       {totalCost > 0 && (
-        <div className="lg:hidden fixed bottom-4 left-4 right-4 z-40">
+        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-40">
           <Button 
             onClick={handleGenerateEstimate}
-            className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg"
-            size="lg"
+            className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg text-sm py-3"
+            size="default"
           >
-            <FileText className="mr-2 h-5 w-5" />
+            <FileText className="mr-2 h-4 w-4" />
             Переглянути кошторис ({selectedItemsCount} послуг) - {formatCurrency(totalCost)}
           </Button>
         </div>
