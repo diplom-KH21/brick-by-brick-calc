@@ -1,5 +1,5 @@
 
-import { Building2, Users, Award, Clock, CheckCircle } from "lucide-react";
+import { Building2, Users, Award, Clock, CheckCircle, Phone, Mail, MapPin } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const About = () => {
@@ -99,6 +99,29 @@ const About = () => {
               Використані технології: React, TypeScript, Tailwind CSS, shadcn/ui, Vite та інші 
               сучасні інструменти веб-розробки.
             </p>
+          </CardContent>
+        </Card>
+
+        {/* Contact Information */}
+        <Card className="mb-12">
+          <CardHeader>
+            <CardTitle className="text-2xl">Контактна інформація</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex items-center space-x-3">
+                <Phone className="h-5 w-5 text-blue-600" />
+                <span>+380965365381</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Mail className="h-5 w-5 text-blue-600" />
+                <span>vlad.korobeckij@gmail.com</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <MapPin className="h-5 w-5 text-blue-600" />
+                <span>вул. Лесі Українки 40a Дніпро, 49006</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
