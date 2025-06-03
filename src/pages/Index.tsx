@@ -1,6 +1,6 @@
-
 import CalculatorForm from "@/components/CalculatorForm";
 import BackgroundScraper from "@/components/BackgroundScraper";
+import ScrollToTop from "@/components/ScrollToTop";
 import { Building2, Calculator } from "lucide-react";
 
 const Index = () => {
@@ -55,6 +55,9 @@ const Index = () => {
           <p className="text-gray-400">© 2024 БудКалькулятор. Всі права захищені.</p>
         </div>
       </footer>
+
+      {/* Scroll to top button */}
+      <ScrollToTop />
     </div>
   );
 };
