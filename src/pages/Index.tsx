@@ -1,11 +1,14 @@
 
 import CalculatorForm from "@/components/CalculatorForm";
-import WebScraper from "@/components/WebScraper";
+import BackgroundScraper from "@/components/BackgroundScraper";
 import { Building2, Calculator } from "lucide-react";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
+      {/* Скрытый парсер работает в фоне */}
+      <BackgroundScraper />
+      
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -36,13 +39,6 @@ const Index = () => {
             Розрахуйте вартість ремонту та будівельних робіт онлайн. 
             Оберіть необхідні послуги та отримайте точну кошторис проекту.
           </p>
-        </div>
-      </section>
-
-      {/* Web Scraper */}
-      <section className="pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <WebScraper />
         </div>
       </section>
 

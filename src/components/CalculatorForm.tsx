@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,7 @@ import ServiceCard from "./ServiceCard";
 import CategorySidebar from "./CategorySidebar";
 import { calculateTotal, formatCurrency } from "@/utils/calculations";
 import { constructionServices, categories } from "@/data/services";
-import { Calculator, FileText, Download, CheckCircle } from "lucide-react";
+import { Calculator, FileText, Download, CheckCircle, X } from "lucide-react";
 import jsPDF from 'jspdf';
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,10 +54,24 @@ const CalculatorForm = () => {
     setTotalCost(total);
   };
 
+  const removeService = (serviceId: string) => {
+    const updatedServices = { ...selectedServices };
+    delete updatedServices[serviceId];
+    setSelectedServices(updatedServices);
+    
+    // Recalculate total cost
+    const total = Object.entries(updatedServices).reduce((sum, [id, quantity]) => {
+      const service = constructionServices.find(s => s.id === id);
+      return sum + (service ? service.price * quantity : 0);
+    }, 0);
+    
+    setTotalCost(total);
+  };
+
   const generatePDF = () => {
     try {
       const selectedItems = Object.entries(selectedServices)
-        .filter(([_, service]) => service.selected && service.area > 0);
+        .filter(([_, area]) => area > 0);
 
       if (selectedItems.length === 0) {
         toast({
@@ -94,16 +109,16 @@ const CalculatorForm = () => {
       yPosition += 10;
       
       // Дані таблиці
-      selectedItems.forEach(([serviceId, service]) => {
+      selectedItems.forEach(([serviceId, area]) => {
         const serviceData = constructionServices.find(s => s.id === serviceId);
-        const serviceCost = (serviceData?.price || 0) * service.area;
+        const serviceCost = (serviceData?.price || 0) * area;
         
         // Транслітерація назви послуги
         const transliteratedName = transliterate(serviceData?.name || '');
         const transliteratedUnit = transliterate(serviceData?.unit || '');
         
         pdf.text(transliteratedName, 15, yPosition);
-        pdf.text(service.area.toString(), 80, yPosition);
+        pdf.text(area.toString(), 80, yPosition);
         pdf.text(transliteratedUnit, 110, yPosition);
         pdf.text((serviceData?.price || 0).toString() + ' hrn', 140, yPosition);
         pdf.text(serviceCost.toString() + ' hrn', 170, yPosition);
@@ -260,14 +275,24 @@ const CalculatorForm = () => {
                     const serviceCost = (serviceData?.price || 0) * area;
                     return (
                       <div key={serviceId} className="flex justify-between items-center py-2 border-b border-gray-100">
-                        <div className="text-sm">
+                        <div className="text-sm flex-1">
                           <div className="font-medium">{serviceData?.name}</div>
                           <div className="text-gray-500">
                             {area} {serviceData?.unit}
                           </div>
                         </div>
-                        <div className="text-sm font-medium">
-                          {formatCurrency(serviceCost)}
+                        <div className="flex items-center space-x-2">
+                          <div className="text-sm font-medium">
+                            {formatCurrency(serviceCost)}
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeService(serviceId)}
+                            className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
                     );
@@ -342,16 +367,16 @@ const CalculatorForm = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {selectedItems.map(([serviceId, service]) => {
+                      {selectedItems.map(([serviceId, area]) => {
                         const serviceData = constructionServices.find(s => s.id === serviceId);
-                        const serviceCost = (serviceData?.price || 0) * service.area;
+                        const serviceCost = (serviceData?.price || 0) * area;
                         return (
                           <tr key={serviceId} className="hover:bg-gray-50">
                             <td className="border border-gray-300 px-4 py-3 font-medium">
                               {serviceData?.name}
                             </td>
                             <td className="border border-gray-300 px-4 py-3 text-center">
-                              {service.area}
+                              {area}
                             </td>
                             <td className="border border-gray-300 px-4 py-3 text-center">
                               {serviceData?.unit}
