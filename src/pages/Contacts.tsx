@@ -1,6 +1,6 @@
 
 import { Building2, Phone, Mail, MapPin, Clock } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 const Contacts = () => {
@@ -56,10 +56,10 @@ const Contacts = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           {/* Contact Information */}
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Як з нами зв'язатися</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Як з нами зв'язатися</h2>
             
             {contactInfo.map((contact, index) => (
               <Card key={index}>
@@ -90,24 +90,6 @@ const Contacts = () => {
                   <Phone className="h-5 w-5 mr-2" />
                   Зателефонувати зараз
                 </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Map placeholder */}
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Наше розташування</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="bg-gray-200 h-96 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <MapPin className="h-12 w-12 mx-auto mb-2" />
-                    <p>Інтерактивна карта</p>
-                    <p className="text-sm">вул. Хрещатик, 22, Київ</p>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </div>

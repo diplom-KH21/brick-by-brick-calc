@@ -26,6 +26,24 @@ const About = () => {
     }
   ];
 
+  const techSpecs = [
+    // Row 1
+    { name: "React", description: "Фронтенд фреймворк" },
+    { name: "TypeScript", description: "Типізована мова програмування" },
+    { name: "Tailwind CSS", description: "Система стилізації" },
+    { name: "Vite", description: "Інструмент збірки" },
+    // Row 2
+    { name: "shadcn/ui", description: "Бібліотека компонентів" },
+    { name: "Lucide", description: "Набір іконок" },
+    { name: "jsPDF", description: "Генерація PDF" },
+    { name: "React Router", description: "Маршрутизація" },
+    // Row 3
+    { name: "React Query", description: "Управління станом" },
+    { name: "React Hook Form", description: "Робота з формами" },
+    { name: "Zod", description: "Валідація даних" },
+    { name: "Date-fns", description: "Робота з датами" }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
       {/* Header */}
@@ -51,7 +69,7 @@ const About = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-6">Про проект</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Це дипломна робота Владислава Романовича Коробецького, група КН-21, 
-            Технологічний університет "step". Проект присвячений створенню сучасного 
+            Технологічний університет "КРОК". Проект присвячений створенню сучасного 
             веб-додатку для розрахунку вартості будівельних та ремонтних робіт.
           </p>
         </div>
@@ -65,7 +83,7 @@ const About = () => {
             <p className="mb-4">
               <strong>Автор:</strong> Владислав Романович Коробецький<br/>
               <strong>Група:</strong> КН-21<br/>
-              <strong>Навчальний заклад:</strong> Технологічний університет "step"<br/>
+              <strong>Навчальний заклад:</strong> Технологічний університет "КРОК"<br/>
               <strong>Тип роботи:</strong> Дипломний проект
             </p>
             <p className="mb-4">
@@ -99,40 +117,41 @@ const About = () => {
           ))}
         </div>
 
-        {/* Technical Info */}
+        {/* Technical Info - 3 rows of 4 items */}
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl text-center">Технічні характеристики</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-6 text-center">
-              <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">React</div>
-                <div className="text-gray-600">Фронтенд фреймворк</div>
+            <div className="space-y-6">
+              {/* Row 1 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                {techSpecs.slice(0, 4).map((tech, index) => (
+                  <div key={index}>
+                    <div className="text-3xl font-bold text-blue-600 mb-2">{tech.name}</div>
+                    <div className="text-gray-600">{tech.description}</div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">TypeScript</div>
-                <div className="text-gray-600">Типізована мова програмування</div>
+              
+              {/* Row 2 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                {techSpecs.slice(4, 8).map((tech, index) => (
+                  <div key={index}>
+                    <div className="text-3xl font-bold text-blue-600 mb-2">{tech.name}</div>
+                    <div className="text-gray-600">{tech.description}</div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">Tailwind CSS</div>
-                <div className="text-gray-600">Система стилізації</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">Vite</div>
-                <div className="text-gray-600">Інструмент збірки</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">shadcn/ui</div>
-                <div className="text-gray-600">Бібліотека компонентів</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">Lucide</div>
-                <div className="text-gray-600">Набір іконок</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">jsPDF</div>
-                <div className="text-gray-600">Генерація PDF</div>
+
+              {/* Row 3 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                {techSpecs.slice(8, 12).map((tech, index) => (
+                  <div key={index}>
+                    <div className="text-3xl font-bold text-blue-600 mb-2">{tech.name}</div>
+                    <div className="text-gray-600">{tech.description}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </CardContent>
@@ -142,7 +161,7 @@ const About = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400">© 2024 Дипломна робота Владислава Коробецького. Технологічний університет "step".</p>
+          <p className="text-gray-400">© 2024 Дипломна робота Владислава Коробецького. Технологічний університет "КРОК".</p>
         </div>
       </footer>
     </div>
