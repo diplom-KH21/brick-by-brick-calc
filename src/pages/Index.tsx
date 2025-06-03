@@ -1,6 +1,6 @@
 
 import CalculatorForm from "@/components/CalculatorForm";
-import { Building2, Calculator, HardHat } from "lucide-react";
+import { Building2, Calculator } from "lucide-react";
 
 const Index = () => {
   return (
@@ -26,8 +26,7 @@ const Index = () => {
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center mb-6">
-            <Calculator className="h-12 w-12 text-blue-600 mr-4" />
-            <HardHat className="h-12 w-12 text-blue-600" />
+            <Calculator className="h-12 w-12 text-blue-600" />
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Калькулятор будівельних робіт

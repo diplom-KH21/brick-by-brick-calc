@@ -6,23 +6,23 @@ const About = () => {
   const features = [
     {
       icon: <Users className="h-8 w-8 text-blue-600" />,
-      title: "Досвідчена команда",
-      description: "Понад 10 років досвіду в будівельній сфері з командою кваліфікованих спеціалістів"
+      title: "Студентський проект",
+      description: "Дипломна робота з розробки сучасного веб-додатку для розрахунку будівельних робіт"
     },
     {
       icon: <Award className="h-8 w-8 text-blue-600" />,
-      title: "Гарантія якості",
-      description: "Надаємо гарантію на всі види робіт та використовуємо тільки якісні матеріали"
+      title: "Сучасні технології",
+      description: "Використання найновіших веб-технологій та бібліотек для створення зручного інтерфейсу"
     },
     {
       icon: <Clock className="h-8 w-8 text-blue-600" />,
-      title: "Дотримання термінів",
-      description: "Завжди виконуємо роботи в обумовлені терміни без затримок"
+      title: "Інноваційний підхід",
+      description: "Розробка зручного калькулятора для швидкого розрахунку вартості будівельних послуг"
     },
     {
       icon: <CheckCircle className="h-8 w-8 text-blue-600" />,
-      title: "Прозорість цін",
-      description: "Чіткий кошторис без прихованих доплат та несподіванок"
+      title: "Практичне застосування",
+      description: "Реальна можливість використання для планування ремонтних робіт"
     }
   ];
 
@@ -48,32 +48,38 @@ const About = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">Про нашу компанію</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">Про проект</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Ми - провідна будівельна компанія України, яка спеціалізується на якісних ремонтних та будівельних роботах. 
-            Наша місія - зробити будівництво доступним, прозорим та якісним для кожного клієнта.
+            Це дипломна робота Владислава Романовича Коробецького, група КН-21, 
+            Технологічний університет "step". Проект присвячений створенню сучасного 
+            веб-додатку для розрахунку вартості будівельних та ремонтних робіт.
           </p>
         </div>
 
-        {/* Company Story */}
+        {/* Project Info */}
         <Card className="mb-12">
           <CardHeader>
-            <CardTitle className="text-2xl">Наша історія</CardTitle>
+            <CardTitle className="text-2xl">Опис проекту</CardTitle>
           </CardHeader>
           <CardContent className="text-gray-600 leading-relaxed">
             <p className="mb-4">
-              Компанія БудКалькулятор була заснована у 2014 році з простою метою - зробити будівельні послуги більш прозорими 
-              та доступними для звичайних людей. Почавши як невелика команда ентузіастів, ми виросли в надійного партнера для 
-              тисяч клієнтів по всій Україні.
+              <strong>Автор:</strong> Владислав Романович Коробецький<br/>
+              <strong>Група:</strong> КН-21<br/>
+              <strong>Навчальний заклад:</strong> Технологічний університет "step"<br/>
+              <strong>Тип роботи:</strong> Дипломний проект
             </p>
             <p className="mb-4">
-              За роки роботи ми реалізували понад 2000 проектів різної складності - від косметичного ремонту квартир до 
-              будівництва приватних будинків. Наш досвід та професіоналізм дозволяють нам гарантувати якісний результат 
-              незалежно від масштабу проекту.
+              Даний веб-додаток розроблений як частина дипломної роботи і демонструє навички 
+              створення сучасних веб-застосунків з використанням передових технологій розробки.
+            </p>
+            <p className="mb-4">
+              Проект включає в себе інтерактивний калькулятор для розрахунку вартості різних 
+              видів будівельних робіт, зручний інтерфейс користувача та можливість генерації 
+              детального кошторису у форматі PDF.
             </p>
             <p>
-              Сьогодні БудКалькулятор - це не тільки будівельна компанія, але й онлайн-платформа, яка допомагає клієнтам 
-              швидко та точно розрахувати вартість будівельних робіт та знайти найкращі рішення для своїх потреб.
+              Використані технології: React, TypeScript, Tailwind CSS, shadcn/ui, Vite та інші 
+              сучасні інструменти веб-розробки.
             </p>
           </CardContent>
         </Card>
@@ -93,28 +99,24 @@ const About = () => {
           ))}
         </div>
 
-        {/* Statistics */}
+        {/* Technical Info */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl text-center">Наші досягнення</CardTitle>
+            <CardTitle className="text-2xl text-center">Технічні характеристики</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">2000+</div>
-                <div className="text-gray-600">Завершених проектів</div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">React</div>
+                <div className="text-gray-600">Фронтенд фреймворк</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">10+</div>
-                <div className="text-gray-600">Років досвіду</div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">TypeScript</div>
+                <div className="text-gray-600">Типізована мова програмування</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">50+</div>
-                <div className="text-gray-600">Кваліфікованих спеціалістів</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">98%</div>
-                <div className="text-gray-600">Задоволених клієнтів</div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">Tailwind CSS</div>
+                <div className="text-gray-600">Система стилізації</div>
               </div>
             </div>
           </CardContent>
@@ -124,7 +126,7 @@ const About = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400">© 2024 БудКалькулятор. Всі права захищені.</p>
+          <p className="text-gray-400">© 2024 Дипломна робота Владислава Коробецького. Технологічний університет "step".</p>
         </div>
       </footer>
     </div>

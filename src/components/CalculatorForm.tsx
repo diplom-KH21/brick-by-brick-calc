@@ -68,30 +68,45 @@ const CalculatorForm = () => {
   const generatePDF = () => {
     const pdf = new jsPDF();
     
+    // Set font to support Ukrainian characters
+    pdf.setFont("helvetica");
+    
     // Title
     pdf.setFontSize(20);
-    pdf.text('Кошторис будівельних робіт', 20, 30);
+    pdf.text('Kostoris budivelnykh robit', 20, 30);
     
     // Date
     pdf.setFontSize(12);
     const currentDate = new Date().toLocaleDateString('uk-UA');
-    pdf.text(`Дата: ${currentDate}`, 20, 45);
+    pdf.text(`Data: ${currentDate}`, 20, 45);
     
     let yPosition = 65;
     pdf.setFontSize(14);
-    pdf.text('Обрані послуги:', 20, yPosition);
+    pdf.text('Obrani posluhy:', 20, yPosition);
     
     yPosition += 15;
     pdf.setFontSize(10);
     
-    // Selected services
+    // Selected services - using transliteration for Ukrainian text
     Object.entries(selectedServices)
       .filter(([_, service]) => service.selected && service.area > 0)
       .forEach(([serviceId, service]) => {
         const serviceData = constructionServices.find(s => s.id === serviceId);
         if (serviceData) {
           const serviceCost = serviceData.price * service.area;
-          const text = `${serviceData.name}: ${service.area} ${serviceData.unit} × ${formatCurrency(serviceData.price)} = ${formatCurrency(serviceCost)}`;
+          // Convert Ukrainian text to Latin for PDF compatibility
+          const serviceName = serviceData.name
+            .replace(/[а-я]/g, (char) => {
+              const translitMap: { [key: string]: string } = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'є': 'ye',
+                'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'ї': 'yi', 'й': 'y', 'к': 'k', 'л': 'l',
+                'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', 'ю': 'yu', 'я': 'ya'
+              };
+              return translitMap[char] || char;
+            });
+          
+          const text = `${serviceName}: ${service.area} ${serviceData.unit} x ${formatCurrency(serviceData.price)} = ${formatCurrency(serviceCost)}`;
           
           if (yPosition > 280) {
             pdf.addPage();
@@ -111,7 +126,7 @@ const CalculatorForm = () => {
     }
     
     pdf.setFontSize(14);
-    pdf.text(`Загальна вартість: ${formatCurrency(totalCost)}`, 20, yPosition);
+    pdf.text(`Zahalna vartist: ${formatCurrency(totalCost)}`, 20, yPosition);
     
     // Save PDF
     pdf.save('kostoris-budivelnykh-robit.pdf');
