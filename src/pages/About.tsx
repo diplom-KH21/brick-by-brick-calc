@@ -105,7 +105,7 @@ const About = () => {
             <CardTitle className="text-2xl text-center">Технічні характеристики</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-6 text-center">
               <div>
                 <div className="text-3xl font-bold text-blue-600 mb-2">React</div>
                 <div className="text-gray-600">Фронтенд фреймворк</div>
@@ -117,6 +117,22 @@ const About = () => {
               <div>
                 <div className="text-3xl font-bold text-blue-600 mb-2">Tailwind CSS</div>
                 <div className="text-gray-600">Система стилізації</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">Vite</div>
+                <div className="text-gray-600">Інструмент збірки</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">shadcn/ui</div>
+                <div className="text-gray-600">Бібліотека компонентів</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">Lucide</div>
+                <div className="text-gray-600">Набір іконок</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">jsPDF</div>
+                <div className="text-gray-600">Генерація PDF</div>
               </div>
             </div>
           </CardContent>
