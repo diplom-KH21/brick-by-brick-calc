@@ -10,7 +10,7 @@ import jsPDF from 'jspdf';
 import { useToast } from "@/hooks/use-toast";
 
 const CalculatorForm = () => {
-  const [selectedServices, setSelectedServices] = useState<Record<string, { area: number; selected: boolean }>>({});
+  const [selectedServices, setSelectedServices] = useState<Record<string, number>>({});
   const [totalCost, setTotalCost] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showEstimate, setShowEstimate] = useState(false);
@@ -36,36 +36,21 @@ const CalculatorForm = () => {
     return grouped;
   }, [filteredServices, selectedCategory]);
 
-  const handleServiceToggle = (serviceId: string, price: number) => {
-    const currentService = selectedServices[serviceId] || { area: 0, selected: false };
-    const newSelected = !currentService.selected;
-    const newArea = newSelected ? (currentService.area || 1) : currentService.area;
-    
+  const handleAreaChange = (serviceId: string, area: number) => {
     const updatedServices = {
       ...selectedServices,
-      [serviceId]: {
-        area: newArea,
-        selected: newSelected
-      }
+      [serviceId]: area
     };
     
     setSelectedServices(updatedServices);
-    setTotalCost(calculateTotal(updatedServices, constructionServices));
-  };
-
-  const handleAreaChange = (serviceId: string, area: number, price: number) => {
-    const currentService = selectedServices[serviceId] || { area: 0, selected: false };
     
-    const updatedServices = {
-      ...selectedServices,
-      [serviceId]: {
-        area: area,
-        selected: currentService.selected
-      }
-    };
+    // Calculate total cost
+    const total = Object.entries(updatedServices).reduce((sum, [id, quantity]) => {
+      const service = constructionServices.find(s => s.id === id);
+      return sum + (service ? service.price * quantity : 0);
+    }, 0);
     
-    setSelectedServices(updatedServices);
-    setTotalCost(calculateTotal(updatedServices, constructionServices));
+    setTotalCost(total);
   };
 
   const generatePDF = () => {
@@ -183,12 +168,12 @@ const CalculatorForm = () => {
 
   const handleGenerateEstimate = () => {
     const selectedItems = Object.entries(selectedServices)
-      .filter(([_, service]) => service.selected && service.area > 0);
+      .filter(([_, area]) => area > 0);
 
     if (selectedItems.length === 0) {
       toast({
         title: "Помилка",
-        description: "Оберіть хоча б одну послугу для формування кошторису",
+        description: "Введіть кількість хоча б для однієї послуги",
         variant: "destructive",
       });
       return;
@@ -196,7 +181,6 @@ const CalculatorForm = () => {
 
     setShowEstimate(true);
     
-    // Scroll to estimate after a brief delay to ensure it's rendered
     setTimeout(() => {
       estimateRef.current?.scrollIntoView({ 
         behavior: 'smooth',
@@ -211,12 +195,11 @@ const CalculatorForm = () => {
   };
 
   const selectedItems = Object.entries(selectedServices)
-    .filter(([_, service]) => service.selected && service.area > 0);
+    .filter(([_, area]) => area > 0);
 
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Category Sidebar */}
         <div className="lg:col-span-1">
           <CategorySidebar
             selectedCategory={selectedCategory}
@@ -224,7 +207,6 @@ const CalculatorForm = () => {
           />
         </div>
 
-        {/* Services Selection */}
         <div className="lg:col-span-2">
           <Card className="shadow-lg">
             <CardHeader>
@@ -249,10 +231,8 @@ const CalculatorForm = () => {
                         <ServiceCard
                           key={service.id}
                           service={service}
-                          isSelected={selectedServices[service.id]?.selected || false}
-                          area={selectedServices[service.id]?.area || 0}
-                          onToggle={() => handleServiceToggle(service.id, service.price)}
-                          onAreaChange={(area) => handleAreaChange(service.id, area, service.price)}
+                          area={selectedServices[service.id] || 0}
+                          onAreaChange={(area) => handleAreaChange(service.id, area)}
                         />
                       ))}
                     </div>
@@ -263,7 +243,6 @@ const CalculatorForm = () => {
           </Card>
         </div>
 
-        {/* Summary */}
         <div className="lg:col-span-1">
           <Card className="shadow-lg sticky top-4">
             <CardHeader>
@@ -275,16 +254,16 @@ const CalculatorForm = () => {
             <CardContent className="space-y-4">
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {Object.entries(selectedServices)
-                  .filter(([_, service]) => service.selected && service.area > 0)
-                  .map(([serviceId, service]) => {
+                  .filter(([_, area]) => area > 0)
+                  .map(([serviceId, area]) => {
                     const serviceData = constructionServices.find(s => s.id === serviceId);
-                    const serviceCost = (serviceData?.price || 0) * service.area;
+                    const serviceCost = (serviceData?.price || 0) * area;
                     return (
                       <div key={serviceId} className="flex justify-between items-center py-2 border-b border-gray-100">
                         <div className="text-sm">
                           <div className="font-medium">{serviceData?.name}</div>
                           <div className="text-gray-500">
-                            {service.area} {serviceData?.unit}
+                            {area} {serviceData?.unit}
                           </div>
                         </div>
                         <div className="text-sm font-medium">
@@ -326,7 +305,7 @@ const CalculatorForm = () => {
               
               {totalCost === 0 && (
                 <div className="text-center text-gray-500 py-8">
-                  Оберіть послуги для розрахунку вартості
+                  Введіть кількість для послуг
                 </div>
               )}
             </CardContent>

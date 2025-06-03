@@ -1,5 +1,6 @@
 
 import CalculatorForm from "@/components/CalculatorForm";
+import WebScraper from "@/components/WebScraper";
 import { Building2, Calculator } from "lucide-react";
 
 const Index = () => {
@@ -35,6 +36,13 @@ const Index = () => {
             Розрахуйте вартість ремонту та будівельних робіт онлайн. 
             Оберіть необхідні послуги та отримайте точну кошторис проекту.
           </p>
+        </div>
+      </section>
+
+      {/* Web Scraper */}
+      <section className="pb-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <WebScraper />
         </div>
       </section>
 
