@@ -18,7 +18,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
 }) => {
   const [visibleCategory, setVisibleCategory] = useState<string>("");
   const serviceRefs = useRef<Record<string, HTMLDivElement>>({});
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -37,7 +36,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
         });
       },
       {
-        root: containerRef.current,
         threshold: 0.5,
       }
     );
@@ -58,10 +56,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
-          ref={containerRef}
-          className="h-96 overflow-y-auto space-y-6 pr-2"
-        >
+        <div className="space-y-6">
           {constructionServices.map((service) => {
             const category = categories.find(c => c.id === service.category);
             return (
