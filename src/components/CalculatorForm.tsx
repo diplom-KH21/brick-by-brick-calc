@@ -1,6 +1,5 @@
-
 import React, { useState, useMemo, useRef } from "react";
-import ServiceList from "./ServiceList";
+import ServiceList, { ServiceListRef } from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
 import EstimateSection from "./EstimateSection";
 import EstimateTable from "./EstimateTable";
@@ -16,7 +15,7 @@ const CalculatorForm = () => {
   const [showEstimate, setShowEstimate] = useState(false);
   const { toast } = useToast();
   const estimateRef = useRef<HTMLDivElement>(null);
-  const serviceListRef = useRef<any>(null);
+  const serviceListRef = useRef<ServiceListRef>(null);
 
   const handleAreaChange = (serviceId: string, area: number) => {
     const updatedServices = {
@@ -50,8 +49,8 @@ const CalculatorForm = () => {
   };
 
   const handleCategoryClick = (categoryId: string) => {
-    if (serviceListRef.current && serviceListRef.current.onScrollToCategory) {
-      serviceListRef.current.onScrollToCategory(categoryId);
+    if (serviceListRef.current) {
+      serviceListRef.current.scrollToCategory(categoryId);
     }
   };
 
@@ -131,7 +130,6 @@ const CalculatorForm = () => {
             selectedServices={selectedServices}
             onAreaChange={handleAreaChange}
             onCategoryChange={setSelectedCategory}
-            onScrollToCategory={() => {}}
           />
         </div>
 

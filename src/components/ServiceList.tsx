@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ServiceCard from "./ServiceCard";
 import { constructionServices, categories } from "@/data/services";
@@ -9,18 +9,31 @@ interface ServiceListProps {
   selectedServices: Record<string, number>;
   onAreaChange: (serviceId: string, area: number) => void;
   onCategoryChange: (categoryId: string) => void;
-  onScrollToCategory: (categoryId: string) => void;
 }
 
-const ServiceList: React.FC<ServiceListProps> = ({
+export interface ServiceListRef {
+  scrollToCategory: (categoryId: string) => void;
+}
+
+const ServiceList = forwardRef<ServiceListRef, ServiceListProps>(({
   selectedServices,
   onAreaChange,
   onCategoryChange,
-  onScrollToCategory,
-}) => {
+}, ref) => {
   const [visibleCategory, setVisibleCategory] = useState<string>("");
-  const serviceRefs = useRef<Record<string, HTMLDivElement>>({});
   const categoryRefs = useRef<Record<string, HTMLDivElement>>({});
+
+  useImperativeHandle(ref, () => ({
+    scrollToCategory: (categoryId: string) => {
+      const categoryRef = categoryRefs.current[categoryId];
+      if (categoryRef) {
+        categoryRef.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+  }));
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -46,18 +59,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
     return () => observer.disconnect();
   }, [visibleCategory, onCategoryChange]);
-
-  useEffect(() => {
-    onScrollToCategory = (categoryId: string) => {
-      const categoryRef = categoryRefs.current[categoryId];
-      if (categoryRef) {
-        categoryRef.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    };
-  }, []);
 
   // Group services by category
   const servicesByCategory = categories.map(category => ({
@@ -88,7 +89,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                 <span className="text-2xl">{category.icon}</span>
                 <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
               </div>
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {services.map((service) => (
                   <ServiceCard
                     key={service.id}
@@ -104,6 +105,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+ServiceList.displayName = "ServiceList";
 
 export default ServiceList;
