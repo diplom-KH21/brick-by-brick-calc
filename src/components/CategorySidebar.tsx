@@ -17,29 +17,18 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
       <CardContent className="p-4">
         <h3 className="text-lg font-semibold mb-4 text-gray-900">Категорії</h3>
         <div className="space-y-2">
-          <button
-            onClick={() => onCategoryChange("all")}
-            className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-              selectedCategory === "all"
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            📋 Усі послуги
-          </button>
           {categories.map((category) => (
-            <button
+            <div
               key={category.id}
-              onClick={() => onCategoryChange(category.id)}
-              className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
+              className={`px-3 py-2 rounded-md transition-colors ${
                 selectedCategory === category.id
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-blue-100 text-blue-700 font-medium border-l-4 border-blue-500"
+                  : "text-gray-600"
               }`}
             >
               <span className="mr-2">{category.icon}</span>
               {category.name}
-            </button>
+            </div>
           ))}
         </div>
       </CardContent>

@@ -19,7 +19,7 @@ const ServiceCarousel: React.FC<ServiceCarouselProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
-  // Обновляем категорию при изменении текущего индекса
+  // Update category when current index changes
   React.useEffect(() => {
     if (constructionServices[currentIndex]) {
       const currentService = constructionServices[currentIndex];
@@ -38,20 +38,24 @@ const ServiceCarousel: React.FC<ServiceCarouselProps> = ({
       <CardContent>
         <Carousel 
           className="w-full"
+          orientation="vertical"
           opts={{
             align: "start",
+            loop: false,
           }}
-          onSelect={(api) => {
+          setApi={(api) => {
             if (api) {
-              setCurrentIndex(api.selectedScrollSnap());
+              api.on("select", () => {
+                setCurrentIndex(api.selectedScrollSnap());
+              });
             }
           }}
         >
-          <CarouselContent>
+          <CarouselContent className="h-96">
             {constructionServices.map((service, index) => {
               const category = categories.find(c => c.id === service.category);
               return (
-                <CarouselItem key={service.id} className="md:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={service.id}>
                   <div className="p-1">
                     <div className="space-y-4">
                       <div className="flex items-center space-x-2 border-b border-gray-200 pb-2">
