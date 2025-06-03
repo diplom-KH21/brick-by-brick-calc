@@ -13,7 +13,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
   onCategoryChange,
 }) => {
   return (
-    <Card className="shadow-lg sticky top-4">
+    <Card className="shadow-lg">
       <CardContent className="p-4">
         <h3 className="text-lg font-semibold mb-4 text-gray-900">Категорії</h3>
         <div className="space-y-2">

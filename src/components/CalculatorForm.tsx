@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useRef } from "react";
-import ServiceCarousel from "./ServiceCarousel";
+import ServiceList from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
 import EstimateSection from "./EstimateSection";
 import EstimateTable from "./EstimateTable";
@@ -110,7 +110,7 @@ const CalculatorForm = () => {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 lg:sticky lg:top-4 lg:self-start">
           <CategorySidebar
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
@@ -118,14 +118,14 @@ const CalculatorForm = () => {
         </div>
 
         <div className="lg:col-span-2">
-          <ServiceCarousel
+          <ServiceList
             selectedServices={selectedServices}
             onAreaChange={handleAreaChange}
             onCategoryChange={setSelectedCategory}
           />
         </div>
 
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 lg:sticky lg:top-4 lg:self-start">
           <EstimateSection
             selectedServices={selectedServices}
             totalCost={totalCost}
