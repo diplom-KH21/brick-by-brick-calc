@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import CategorySidebar from "./CategorySidebar";
 import { calculateTotal, formatCurrency } from "@/utils/calculations";
 import { constructionServices, categories } from "@/data/services";
 import { Calculator, FileText, Download, CheckCircle } from "lucide-react";
+import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,6 +17,7 @@ const CalculatorForm = () => {
   const [showEstimate, setShowEstimate] = useState(false);
   const { toast } = useToast();
   const estimateRef = useRef<HTMLDivElement>(null);
+  const pdfRef = useRef<HTMLDivElement>(null);
 
   const filteredServices = useMemo(() => {
     if (selectedCategory === "all") {
@@ -69,102 +70,118 @@ const CalculatorForm = () => {
     setTotalCost(calculateTotal(updatedServices, constructionServices));
   };
 
-  const generatePDF = () => {
-    const pdf = new jsPDF();
-    
-    // Set font to support Ukrainian characters
-    pdf.setFont("helvetica");
-    
-    // Title
-    pdf.setFontSize(20);
-    pdf.text('Кошторис будівельних робіт', 20, 30);
-    
-    // Date
-    pdf.setFontSize(12);
-    const currentDate = new Date().toLocaleDateString('uk-UA');
-    pdf.text(`Дата: ${currentDate}`, 20, 45);
-    
-    let yPosition = 65;
-    pdf.setFontSize(14);
-    pdf.text('Обрані послуги:', 20, yPosition);
-    
-    yPosition += 15;
-    pdf.setFontSize(10);
-    
-    // Table headers
-    pdf.text('Найменування робіт', 20, yPosition);
-    pdf.text('Кількість', 100, yPosition);
-    pdf.text('Од. виміру', 130, yPosition);
-    pdf.text('Ціна за од.', 160, yPosition);
-    pdf.text('Сума', 190, yPosition);
-    
-    yPosition += 10;
-    
-    // Draw line under headers
-    pdf.line(20, yPosition, 210, yPosition);
-    yPosition += 5;
-    
-    // Selected services
-    Object.entries(selectedServices)
-      .filter(([_, service]) => service.selected && service.area > 0)
-      .forEach(([serviceId, service]) => {
-        const serviceData = constructionServices.find(s => s.id === serviceId);
-        if (serviceData) {
-          const serviceCost = serviceData.price * service.area;
-          
-          if (yPosition > 280) {
-            pdf.addPage();
-            yPosition = 20;
-          }
-          
-          // Service name (truncate if too long)
-          const serviceName = serviceData.name.length > 35 ? 
-            serviceData.name.substring(0, 35) + '...' : serviceData.name;
-          
-          pdf.text(serviceName, 20, yPosition);
-          pdf.text(service.area.toString(), 100, yPosition);
-          pdf.text(serviceData.unit, 130, yPosition);
-          pdf.text(formatCurrency(serviceData.price), 160, yPosition);
-          pdf.text(formatCurrency(serviceCost), 190, yPosition);
-          
-          yPosition += 8;
-        }
+  const generatePDF = async () => {
+    if (!pdfRef.current) return;
+
+    try {
+      // Create a temporary div for PDF content
+      const pdfContent = document.createElement('div');
+      pdfContent.style.padding = '40px';
+      pdfContent.style.backgroundColor = 'white';
+      pdfContent.style.fontFamily = 'Arial, sans-serif';
+      pdfContent.style.width = '800px';
+      
+      const selectedItems = Object.entries(selectedServices)
+        .filter(([_, service]) => service.selected && service.area > 0);
+
+      pdfContent.innerHTML = `
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #1e40af; font-size: 28px; margin-bottom: 10px;">Кошторис будівельних робіт</h1>
+          <p style="color: #666; font-size: 14px;">Дата складання: ${new Date().toLocaleDateString('uk-UA')}</p>
+        </div>
+        
+        <h2 style="color: #333; font-size: 18px; margin-bottom: 20px;">Обрані послуги:</h2>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+          <thead>
+            <tr style="background-color: #f3f4f6;">
+              <th style="border: 1px solid #d1d5db; padding: 12px; text-align: left; font-size: 14px;">Найменування робіт</th>
+              <th style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-size: 14px;">Кількість</th>
+              <th style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-size: 14px;">Од. виміру</th>
+              <th style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-size: 14px;">Ціна за од.</th>
+              <th style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-size: 14px;">Сума</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${selectedItems.map(([serviceId, service]) => {
+              const serviceData = constructionServices.find(s => s.id === serviceId);
+              const serviceCost = (serviceData?.price || 0) * service.area;
+              return `
+                <tr>
+                  <td style="border: 1px solid #d1d5db; padding: 12px; font-size: 13px;">${serviceData?.name}</td>
+                  <td style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-size: 13px;">${service.area}</td>
+                  <td style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-size: 13px;">${serviceData?.unit}</td>
+                  <td style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-size: 13px;">${formatCurrency(serviceData?.price || 0)}</td>
+                  <td style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-weight: bold; font-size: 13px;">${formatCurrency(serviceCost)}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+          <tfoot>
+            <tr style="background-color: #dbeafe;">
+              <td style="border: 1px solid #d1d5db; padding: 12px; font-weight: bold; font-size: 14px;" colspan="4">ЗАГАЛЬНА ВАРТІСТЬ:</td>
+              <td style="border: 1px solid #d1d5db; padding: 12px; text-align: center; font-weight: bold; font-size: 16px; color: #1e40af;">${formatCurrency(totalCost)}</td>
+            </tr>
+          </tfoot>
+        </table>
+        
+        <div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin-top: 20px;">
+          <p style="color: #92400e; font-size: 12px; margin: 0;">
+            <strong>Примітка:</strong> Кошторис є попереднім розрахунком. Точна вартість робіт може відрізнятися 
+            залежно від конкретних умов об'єкта, складності виконання робіт та ринкових цін на матеріали.
+          </p>
+        </div>
+      `;
+
+      // Append to body temporarily
+      document.body.appendChild(pdfContent);
+
+      // Generate canvas from HTML
+      const canvas = await html2canvas(pdfContent, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
       });
-    
-    // Total
-    yPosition += 10;
-    if (yPosition > 280) {
-      pdf.addPage();
-      yPosition = 20;
+
+      // Remove temporary element
+      document.body.removeChild(pdfContent);
+
+      // Create PDF
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save('кошторис-будівельних-робіт.pdf');
+
+      toast({
+        title: "PDF згенеровано",
+        description: "Кошторис успішно завантажено у форматі PDF з українським текстом",
+      });
+
+    } catch (error) {
+      console.error('Помилка генерації PDF:', error);
+      toast({
+        title: "Помилка",
+        description: "Не вдалося згенерувати PDF файл",
+        variant: "destructive",
+      });
     }
-    
-    // Draw line before total
-    pdf.line(20, yPosition, 210, yPosition);
-    yPosition += 10;
-    
-    pdf.setFontSize(14);
-    pdf.text('ЗАГАЛЬНА ВАРТІСТЬ:', 20, yPosition);
-    pdf.text(formatCurrency(totalCost), 160, yPosition);
-    
-    // Add note
-    yPosition += 20;
-    if (yPosition > 270) {
-      pdf.addPage();
-      yPosition = 20;
-    }
-    
-    pdf.setFontSize(10);
-    pdf.text('Примітка: Кошторис є попереднім розрахунком. Точна вартість робіт може', 20, yPosition);
-    yPosition += 5;
-    pdf.text('відрізнятися залежно від конкретних умов об\'єкта та ринкових цін.', 20, yPosition);
-    
-    // Save PDF
-    pdf.save('кошторис-будівельних-робіт.pdf');
-    
-    toast({
-      title: "PDF згенеровано",
-      description: "Кошторис успішно завантажено у форматі PDF",
-    });
   };
 
   const handleGenerateEstimate = () => {
@@ -340,7 +357,7 @@ const CalculatorForm = () => {
               </p>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="space-y-4">
+              <div ref={pdfRef} className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Обрані послуги:</h3>
                 
                 <div className="overflow-x-auto">
