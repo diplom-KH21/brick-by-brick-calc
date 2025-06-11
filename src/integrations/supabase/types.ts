@@ -9,6 +9,68 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      estimate_items: {
+        Row: {
+          created_at: string
+          estimate_id: string
+          id: string
+          quantity: number
+          service_id: string
+          service_name: string
+          total_price: number
+          unit: string
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          estimate_id: string
+          id?: string
+          quantity: number
+          service_id: string
+          service_name: string
+          total_price: number
+          unit: string
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          estimate_id?: string
+          id?: string
+          quantity?: number
+          service_id?: string
+          service_name?: string
+          total_price?: number
+          unit?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estimate_items_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estimates: {
+        Row: {
+          created_at: string
+          id: string
+          total_cost: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          total_cost: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          total_cost?: number
+        }
+        Relationships: []
+      }
       nazvanie: {
         Row: {
           created_at: string

@@ -6,6 +6,7 @@ import EstimateSection from "./EstimateSection";
 import EstimateTable from "./EstimateTable";
 import { formatCurrency } from "@/utils/calculations";
 import { generatePDF } from "@/utils/pdfGenerator";
+import { saveEstimateToDatabase } from "@/utils/estimateStorage";
 import { constructionServices } from "@/data/services";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -88,7 +89,7 @@ const CalculatorForm = () => {
     }
   };
 
-  const handleGenerateEstimate = () => {
+  const handleGenerateEstimate = async () => {
     const selectedItems = Object.entries(selectedServices)
       .filter(([_, area]) => area > 0);
 
@@ -101,19 +102,34 @@ const CalculatorForm = () => {
       return;
     }
 
-    setShowEstimate(true);
-    
-    setTimeout(() => {
-      estimateRef.current?.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }, 100);
+    try {
+      // Save estimate to database
+      console.log('Saving estimate with data:', { selectedServices, totalCost });
+      const estimateId = await saveEstimateToDatabase({ selectedServices, totalCost });
+      console.log('Estimate saved with ID:', estimateId);
+      
+      setShowEstimate(true);
+      
+      setTimeout(() => {
+        estimateRef.current?.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 100);
 
-    toast({
-      title: "Кошторис сформовано",
-      description: `Обрано ${selectedItems.length} послуг на суму ${formatCurrency(totalCost)}`,
-    });
+      toast({
+        title: "Кошторис сформовано",
+        description: `Обрано ${selectedItems.length} послуг на суму ${formatCurrency(totalCost)}`,
+      });
+
+    } catch (error) {
+      console.error('Error saving estimate:', error);
+      toast({
+        title: "Помилка",
+        description: "Не вдалося зберегти кошторис",
+        variant: "destructive",
+      });
+    }
   };
 
   const selectedItemsCount = Object.entries(selectedServices).filter(([_, area]) => area > 0).length;
