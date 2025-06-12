@@ -14,6 +14,11 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
   onCategoryChange,
   onCategoryClick,
 }) => {
+  const handleCategoryClick = (categoryId: string) => {
+    onCategoryChange(categoryId);
+    onCategoryClick(categoryId);
+  };
+
   return (
     <div className="sticky top-4">
       <Card className="shadow-lg">
@@ -23,7 +28,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
             {categories.map((category) => (
               <div
                 key={category.id}
-                onClick={() => onCategoryClick(category.id)}
+                onClick={() => handleCategoryClick(category.id)}
                 className={`px-3 py-2 rounded-md transition-colors cursor-pointer hover:bg-gray-100 ${
                   selectedCategory === category.id
                     ? "bg-blue-100 text-blue-700 font-medium border-l-4 border-blue-500"
