@@ -44,7 +44,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
                 onChange={(e) => onAreaChange(parseFloat(e.target.value) || 0)}
                 className="w-16 md:w-20 h-7 md:h-8 text-xs md:text-sm"
                 min="0"
-                step="0.1"
+                step="1"
               />
               <span className="text-xs md:text-sm text-gray-600">{service.unit}</span>
             </div>
