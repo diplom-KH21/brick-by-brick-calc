@@ -25,7 +25,7 @@ const Navigation = () => {
                 isActive("/") ? "text-blue-600" : "text-gray-600 hover:text-blue-600"
               }`}
             >
-              Послуги
+              Калькулятор
             </a>
             <a 
               href="/about" 
@@ -33,7 +33,7 @@ const Navigation = () => {
                 isActive("/about") ? "text-blue-600" : "text-gray-600 hover:text-blue-600"
               }`}
             >
-              Про нас
+              Про проект
             </a>
             <a 
               href="/contacts" 
