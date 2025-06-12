@@ -11,7 +11,7 @@ const About = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-6">
-            Про БудКалькулятор
+            Про brick-by-brick
           </h1>
           <p className="text-xl text-gray-600 mb-12">
             Дипломний проєкт для автоматичного розрахунку вартості будівельних робіт
@@ -51,7 +51,7 @@ const About = () => {
             
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Наша місія</h3>
+              <h3 className="text-xl font-semibold mb-3">Моя місія</h3>
               <p className="text-gray-600">
                 Хоча це навчальний проєкт у рамках бакалаврської роботи, він створений з метою реальної допомоги користувачам у плануванні будівництва
               </p>
@@ -65,7 +65,7 @@ const About = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Про проєкт</h2>
           <p className="text-lg text-gray-600 mb-8">
-            БудКалькулятор — це дипломний проєкт, розроблений у рамках бакалаврської роботи за спеціальністю 
+            brick-by-brick — це дипломний проєкт, розроблений у рамках бакалаврської роботи за спеціальністю 
             "Комп'ютерні науки". Мета проєкту — зробити процес попереднього кошторису будівництва простим, 
             прозорим і доступним для звичайного користувача.
           </p>
@@ -81,7 +81,7 @@ const About = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400">© 2024 БудКалькулятор. Дипломний проєкт.</p>
+          <p className="text-gray-400">© 2024 brick-by-brick. Дипломний проєкт.</p>
         </div>
       </footer>
     </div>
