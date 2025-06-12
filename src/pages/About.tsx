@@ -1,4 +1,3 @@
-
 import Navigation from "@/components/Navigation";
 import { Building2, Users, Award, Clock, GraduationCap } from "lucide-react";
 
@@ -72,7 +71,7 @@ const About = () => {
           <div className="flex items-center justify-center">
             <Clock className="h-8 w-8 text-blue-600 mr-3" />
             <span className="text-lg font-medium text-gray-900">
-              Дипломний проєкт 2024 року
+              Дипломний проєкт 2025 року
             </span>
           </div>
         </div>
@@ -81,7 +80,7 @@ const About = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400">© 2024 brick-by-brick. Дипломний проєкт.</p>
+          <p className="text-gray-400">© 2025 brick-by-brick. Дипломний проєкт.</p>
         </div>
       </footer>
     </div>
