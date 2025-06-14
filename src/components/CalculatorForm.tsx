@@ -1,9 +1,9 @@
-
 import React, { useState, useMemo, useRef } from "react";
 import ServiceList, { ServiceListRef } from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
 import EstimateSection from "./EstimateSection";
 import EstimateTable from "./EstimateTable";
+import RegionSelector, { regions } from "./RegionSelector";
 import { formatCurrency } from "@/utils/calculations";
 import { generatePDF } from "@/utils/pdfGenerator";
 import { constructionServices } from "@/data/services";
@@ -15,10 +15,14 @@ const CalculatorForm = () => {
   const [selectedServices, setSelectedServices] = useState<Record<string, number>>({});
   const [totalCost, setTotalCost] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedRegion, setSelectedRegion] = useState("dnipro");
   const [showEstimate, setShowEstimate] = useState(false);
   const { toast } = useToast();
   const estimateRef = useRef<HTMLDivElement>(null);
   const serviceListRef = useRef<ServiceListRef>(null);
+
+  const currentRegion = regions.find(r => r.id === selectedRegion);
+  const priceMultiplier = currentRegion?.priceMultiplier || 1.0;
 
   const handleAreaChange = (serviceId: string, area: number) => {
     const updatedServices = {
@@ -28,10 +32,10 @@ const CalculatorForm = () => {
     
     setSelectedServices(updatedServices);
     
-    // Calculate total cost
+    // Calculate total cost with regional multiplier
     const total = Object.entries(updatedServices).reduce((sum, [id, quantity]) => {
       const service = constructionServices.find(s => s.id === id);
-      return sum + (service ? service.price * quantity : 0);
+      return sum + (service ? service.price * quantity * priceMultiplier : 0);
     }, 0);
     
     setTotalCost(total);
@@ -42,13 +46,32 @@ const CalculatorForm = () => {
     delete updatedServices[serviceId];
     setSelectedServices(updatedServices);
     
-    // Recalculate total cost
+    // Recalculate total cost with regional multiplier
     const total = Object.entries(updatedServices).reduce((sum, [id, quantity]) => {
       const service = constructionServices.find(s => s.id === id);
-      return sum + (service ? service.price * quantity : 0);
+      return sum + (service ? service.price * quantity * priceMultiplier : 0);
     }, 0);
     
     setTotalCost(total);
+  };
+
+  const handleRegionChange = (regionId: string) => {
+    setSelectedRegion(regionId);
+    const newRegion = regions.find(r => r.id === regionId);
+    const newMultiplier = newRegion?.priceMultiplier || 1.0;
+    
+    // Recalculate total cost with new regional multiplier
+    const total = Object.entries(selectedServices).reduce((sum, [id, quantity]) => {
+      const service = constructionServices.find(s => s.id === id);
+      return sum + (service ? service.price * quantity * newMultiplier : 0);
+    }, 0);
+    
+    setTotalCost(total);
+
+    toast({
+      title: "Регіон змінено",
+      description: `Обрано регіон: ${newRegion?.name}. Ціни оновлено.`,
+    });
   };
 
   const handleCategoryClick = (categoryId: string) => {
@@ -120,6 +143,12 @@ const CalculatorForm = () => {
 
   return (
     <div className="space-y-8">
+      {/* Region Selector */}
+      <RegionSelector
+        selectedRegion={selectedRegion}
+        onRegionChange={handleRegionChange}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
         <div className="lg:col-span-1">
           <CategorySidebar
@@ -135,6 +164,7 @@ const CalculatorForm = () => {
             selectedServices={selectedServices}
             onAreaChange={handleAreaChange}
             onCategoryChange={setSelectedCategory}
+            priceMultiplier={priceMultiplier}
           />
         </div>
 
@@ -145,6 +175,7 @@ const CalculatorForm = () => {
             onRemoveService={removeService}
             onGeneratePDF={handleGeneratePDF}
             onGenerateEstimate={handleGenerateEstimate}
+            priceMultiplier={priceMultiplier}
           />
         </div>
       </div>
@@ -168,6 +199,7 @@ const CalculatorForm = () => {
         selectedServices={selectedServices}
         totalCost={totalCost}
         onGeneratePDF={handleGeneratePDF}
+        priceMultiplier={priceMultiplier}
       />
     </div>
   );

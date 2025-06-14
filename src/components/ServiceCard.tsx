@@ -17,13 +17,17 @@ interface ServiceCardProps {
   service: Service;
   area: number;
   onAreaChange: (area: number) => void;
+  priceMultiplier?: number;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
   service,
   area,
   onAreaChange,
+  priceMultiplier = 1.0,
 }) => {
+  const adjustedPrice = service.price * priceMultiplier;
+
   return (
     <Card className="transition-all duration-200 hover:shadow-md">
       <CardContent className="p-3 md:p-4">
@@ -32,7 +36,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             {service.name}
           </Label>
           <div className="text-xs md:text-sm text-gray-600">
-            {formatCurrency(service.price)} за {service.unit}
+            {formatCurrency(adjustedPrice)} за {service.unit}
           </div>
           
           <div className="space-y-1 md:space-y-2">
@@ -51,7 +55,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             
             {area > 0 && (
               <div className="text-xs md:text-sm font-medium text-blue-600">
-                = {formatCurrency(service.price * area)}
+                = {formatCurrency(adjustedPrice * area)}
               </div>
             )}
           </div>
