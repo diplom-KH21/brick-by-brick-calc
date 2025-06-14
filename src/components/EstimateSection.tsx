@@ -1,110 +1,161 @@
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Trash2, FileText, Calculator } from "lucide-react";
-import { formatCurrency } from "@/utils/calculations";
-import { constructionServices } from "@/data/services";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { Save, Download, FileText } from 'lucide-react';
+import { generatePDF } from '@/utils/pdfGenerator';
+import { formatCurrency } from '@/utils/calculations';
+import EstimateTable from './EstimateTable';
 
-interface EstimateSectionProps {
-  selectedServices: Record<string, number>;
-  totalCost: number;
-  onRemoveService: (serviceId: string) => void;
-  onGeneratePDF: () => void;
-  onGenerateEstimate: () => void;
-  priceMultiplier?: number;
+interface Service {
+  id: string;
+  name: string;
+  unit: string;
+  pricePerUnit: number;
+  quantity: number;
 }
 
-const EstimateSection: React.FC<EstimateSectionProps> = ({
-  selectedServices,
-  totalCost,
+interface EstimateSectionProps {
+  selectedServices: Service[];
+  totalCost: number;
+  regionId: string;
+  onRemoveService: (serviceId: string) => void;
+  onUpdateQuantity: (serviceId: string, quantity: number) => void;
+}
+
+const EstimateSection = ({ 
+  selectedServices, 
+  totalCost, 
+  regionId,
   onRemoveService,
-  onGeneratePDF,
-  onGenerateEstimate,
-  priceMultiplier = 1.0,
-}) => {
-  const selectedItems = Object.entries(selectedServices).filter(([_, area]) => area > 0);
+  onUpdateQuantity 
+}: EstimateSectionProps) => {
+  const [estimateTitle, setEstimateTitle] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  const handleSaveEstimate = async () => {
+    if (!user) {
+      toast({
+        title: "Увага",
+        description: "Для збереження кошторису необхідно увійти в систему",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (selectedServices.length === 0) {
+      toast({
+        title: "Увага",
+        description: "Додайте послуги до кошторису перед збереженням",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const title = estimateTitle.trim() || 'Кошторис';
+      
+      const { error } = await supabase
+        .from('user_estimates')
+        .insert({
+          custom_user_id: user.id,
+          title,
+          region_id: regionId,
+          selected_services: selectedServices,
+          total_cost: totalCost
+        });
+
+      if (error) {
+        toast({
+          title: "Помилка",
+          description: "Не вдалося зберегти кошторис",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Успіх",
+          description: "Кошторис збережено",
+        });
+        setEstimateTitle('');
+      }
+    } catch (error) {
+      console.error('Error saving estimate:', error);
+      toast({
+        title: "Помилка",
+        description: "Виникла помилка при збереженні",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    const title = estimateTitle.trim() || 'Кошторис';
+    generatePDF(selectedServices, totalCost, regionId, title);
+  };
+
+  if (selectedServices.length === 0) {
+    return null;
+  }
 
   return (
-    <Card className="shadow-lg h-fit">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center text-xl">
-          <Calculator className="mr-3 h-6 w-6" />
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="flex items-center">
+          <FileText className="mr-2 h-5 w-5" />
           Кошторис
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {selectedItems.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">
-            Оберіть послуги для розрахунку вартості
-          </p>
-        ) : (
-          <>
-            <div className="space-y-3 max-h-80 overflow-y-auto">
-              {selectedItems.map(([serviceId, area]) => {
-                const service = constructionServices.find(s => s.id === serviceId);
-                if (!service) return null;
-                
-                const adjustedPrice = service.price * priceMultiplier;
-                
-                return (
-                  <div key={serviceId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {service.name}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {area} {service.unit} × {formatCurrency(adjustedPrice)}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2 ml-2">
-                      <span className="text-sm font-semibold text-blue-600">
-                        {formatCurrency(adjustedPrice * area)}
-                      </span>
-                      <Button
-                        onClick={() => onRemoveService(serviceId)}
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+      <CardContent className="space-y-6">
+        <EstimateTable 
+          services={selectedServices}
+          onRemoveService={onRemoveService}
+          onUpdateQuantity={onUpdateQuantity}
+        />
+        
+        <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
+          <span className="text-lg font-medium">Загальна вартість:</span>
+          <span className="text-2xl font-bold text-blue-600">
+            {formatCurrency(totalCost)}
+          </span>
+        </div>
+
+        <div className="space-y-4">
+          <Input
+            placeholder="Назва кошторису (необов'язково)"
+            value={estimateTitle}
+            onChange={(e) => setEstimateTitle(e.target.value)}
+          />
+          
+          <div className="flex gap-2">
+            <Button
+              onClick={handleSaveEstimate}
+              disabled={isSaving}
+              className="flex-1"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? 'Збереження...' : 'Зберегти кошторис'}
+            </Button>
             
-            <div className="pt-4 border-t">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-lg font-semibold">Загальна сума:</span>
-                <span className="text-xl font-bold text-blue-600">
-                  {formatCurrency(totalCost)}
-                </span>
-              </div>
-              
-              <div className="space-y-2">
-                <Button 
-                  onClick={onGenerateEstimate}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  Переглянути кошторис
-                </Button>
-                
-                <Button 
-                  onClick={onGeneratePDF}
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-xs"
-                >
-                  <FileText className="mr-2 h-3 w-3" />
-                  Завантажити PDF
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
+            <Button
+              onClick={handleDownloadPDF}
+              variant="outline"
+              className="flex-1"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Завантажити PDF
+            </Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

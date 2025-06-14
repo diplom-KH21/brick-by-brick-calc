@@ -110,6 +110,7 @@ export type Database = {
       user_estimates: {
         Row: {
           created_at: string
+          custom_user_id: string | null
           id: string
           region_id: string
           selected_services: Json
@@ -120,6 +121,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          custom_user_id?: string | null
           id?: string
           region_id: string
           selected_services: Json
@@ -130,6 +132,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          custom_user_id?: string | null
           id?: string
           region_id?: string
           selected_services?: Json
@@ -138,6 +141,38 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "user_estimates_custom_user_id_fkey"
+            columns: ["custom_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          id: string
+          password_hash: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          password_hash: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          password_hash?: string
+          updated_at?: string
+          username?: string
+        }
         Relationships: []
       }
     }
@@ -145,7 +180,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      authenticate_user: {
+        Args: { p_username: string; p_password: string }
+        Returns: {
+          user_id: string
+          username: string
+        }[]
+      }
+      create_user: {
+        Args: { p_username: string; p_password: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

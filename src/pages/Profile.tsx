@@ -39,6 +39,7 @@ const Profile = () => {
       const { data, error } = await supabase
         .from('user_estimates')
         .select('*')
+        .eq('custom_user_id', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -75,7 +76,8 @@ const Profile = () => {
       const { error } = await supabase
         .from('user_estimates')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('custom_user_id', user?.id);
 
       if (error) {
         toast({
@@ -99,9 +101,6 @@ const Profile = () => {
     return null;
   }
 
-  // Получаем логин пользователя из метаданных
-  const username = user.user_metadata?.username || 'Не вказано';
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
       <div className="max-w-6xl mx-auto p-4">
@@ -114,7 +113,7 @@ const Profile = () => {
                 <div>
                   <CardTitle className="text-2xl">Особистий кабінет</CardTitle>
                   <p className="text-gray-600 mt-1">
-                    Логін: {username}
+                    Логін: {user.username}
                   </p>
                 </div>
               </div>
