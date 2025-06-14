@@ -10,10 +10,11 @@ interface EstimateTableProps {
   selectedServices: Record<string, number>;
   totalCost: number;
   onGeneratePDF: () => void;
+  priceMultiplier?: number;
 }
 
 const EstimateTable = forwardRef<HTMLDivElement, EstimateTableProps>(
-  ({ selectedServices, totalCost, onGeneratePDF }, ref) => {
+  ({ selectedServices, totalCost, onGeneratePDF, priceMultiplier = 1.0 }, ref) => {
     const selectedItems = Object.entries(selectedServices)
       .filter(([_, area]) => area > 0);
 
@@ -49,7 +50,8 @@ const EstimateTable = forwardRef<HTMLDivElement, EstimateTableProps>(
                   <tbody>
                     {selectedItems.map(([serviceId, area]) => {
                       const serviceData = constructionServices.find(s => s.id === serviceId);
-                      const serviceCost = (serviceData?.price || 0) * area;
+                      const adjustedPrice = (serviceData?.price || 0) * priceMultiplier;
+                      const serviceCost = adjustedPrice * area;
                       return (
                         <tr key={serviceId} className="hover:bg-gray-50">
                           <td className="border border-gray-300 px-4 py-3 font-medium">
@@ -62,7 +64,7 @@ const EstimateTable = forwardRef<HTMLDivElement, EstimateTableProps>(
                             {serviceData?.unit}
                           </td>
                           <td className="border border-gray-300 px-4 py-3 text-center">
-                            {formatCurrency(serviceData?.price || 0)}
+                            {formatCurrency(adjustedPrice)}
                           </td>
                           <td className="border border-gray-300 px-4 py-3 text-center font-semibold">
                             {formatCurrency(serviceCost)}

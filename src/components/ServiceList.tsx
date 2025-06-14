@@ -9,6 +9,7 @@ interface ServiceListProps {
   selectedServices: Record<string, number>;
   onAreaChange: (serviceId: string, area: number) => void;
   onCategoryChange: (categoryId: string) => void;
+  priceMultiplier?: number;
 }
 
 export interface ServiceListRef {
@@ -19,6 +20,7 @@ const ServiceList = forwardRef<ServiceListRef, ServiceListProps>(({
   selectedServices,
   onAreaChange,
   onCategoryChange,
+  priceMultiplier = 1.0,
 }, ref) => {
   const [visibleCategory, setVisibleCategory] = useState<string>("");
   const categoryRefs = useRef<Record<string, HTMLDivElement>>({});
@@ -96,6 +98,7 @@ const ServiceList = forwardRef<ServiceListRef, ServiceListProps>(({
                     service={service}
                     area={selectedServices[service.id] || 0}
                     onAreaChange={(area) => onAreaChange(service.id, area)}
+                    priceMultiplier={priceMultiplier}
                   />
                 ))}
               </div>

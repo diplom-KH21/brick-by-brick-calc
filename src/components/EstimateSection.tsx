@@ -12,6 +12,7 @@ interface EstimateSectionProps {
   onRemoveService: (serviceId: string) => void;
   onGeneratePDF: () => void;
   onGenerateEstimate: () => void;
+  priceMultiplier?: number;
 }
 
 const EstimateSection: React.FC<EstimateSectionProps> = ({
@@ -20,6 +21,7 @@ const EstimateSection: React.FC<EstimateSectionProps> = ({
   onRemoveService,
   onGeneratePDF,
   onGenerateEstimate,
+  priceMultiplier = 1.0,
 }) => {
   const selectedItems = Object.entries(selectedServices).filter(([_, area]) => area > 0);
 
@@ -43,6 +45,8 @@ const EstimateSection: React.FC<EstimateSectionProps> = ({
                 const service = constructionServices.find(s => s.id === serviceId);
                 if (!service) return null;
                 
+                const adjustedPrice = service.price * priceMultiplier;
+                
                 return (
                   <div key={serviceId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex-1 min-w-0">
@@ -50,12 +54,12 @@ const EstimateSection: React.FC<EstimateSectionProps> = ({
                         {service.name}
                       </p>
                       <p className="text-xs text-gray-600">
-                        {area} {service.unit} × {formatCurrency(service.price)}
+                        {area} {service.unit} × {formatCurrency(adjustedPrice)}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2 ml-2">
                       <span className="text-sm font-semibold text-blue-600">
-                        {formatCurrency(service.price * area)}
+                        {formatCurrency(adjustedPrice * area)}
                       </span>
                       <Button
                         onClick={() => onRemoveService(serviceId)}
