@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef } from "react";
 import ServiceList, { ServiceListRef } from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
@@ -111,6 +110,7 @@ const CalculatorForm = () => {
         .from('user_estimates')
         .insert({
           custom_user_id: user.id,
+          user_id: user.id, // Добавляем обязательное поле user_id
           title: `Кошторис від ${new Date().toLocaleDateString('uk-UA')}`,
           region_id: selectedRegion,
           selected_services: selectedServices,

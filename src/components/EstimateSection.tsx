@@ -71,6 +71,7 @@ const EstimateSection = ({
         .from('user_estimates')
         .insert({
           custom_user_id: user.id,
+          user_id: user.id, // Добавляем обязательное поле user_id
           title,
           region_id: 'dnipro',
           selected_services: selectedServices,
