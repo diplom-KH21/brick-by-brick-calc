@@ -99,6 +99,9 @@ const Profile = () => {
     return null;
   }
 
+  // Получаем номер телефона из метаданных пользователя
+  const phoneNumber = user.user_metadata?.phone || 'Не вказано';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
       <div className="max-w-6xl mx-auto p-4">
@@ -111,7 +114,7 @@ const Profile = () => {
                 <div>
                   <CardTitle className="text-2xl">Особистий кабінет</CardTitle>
                   <p className="text-gray-600 mt-1">
-                    Телефон: {user.phone || user.email}
+                    Телефон: {phoneNumber}
                   </p>
                 </div>
               </div>

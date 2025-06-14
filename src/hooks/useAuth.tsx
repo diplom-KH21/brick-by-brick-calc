@@ -38,21 +38,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (phone: string, password: string) => {
+    // Используем phone как email для аутентификации (без подтверждения)
+    const email = `${phone.replace(/[^0-9]/g, '')}@phone.local`;
+    
     const { error } = await supabase.auth.signUp({
-      phone,
+      email,
       password,
       options: {
         data: {
           phone: phone
-        }
+        },
+        emailRedirectTo: `${window.location.origin}/`
       }
     });
     return { error };
   };
 
   const signIn = async (phone: string, password: string) => {
+    // Используем phone как email для аутентификации
+    const email = `${phone.replace(/[^0-9]/g, '')}@phone.local`;
+    
     const { error } = await supabase.auth.signInWithPassword({
-      phone,
+      email,
       password,
     });
     return { error };
