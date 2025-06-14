@@ -86,6 +86,60 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_estimates: {
+        Row: {
+          created_at: string
+          id: string
+          region_id: string
+          selected_services: Json
+          title: string
+          total_cost: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          region_id: string
+          selected_services: Json
+          title?: string
+          total_cost: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          region_id?: string
+          selected_services?: Json
+          title?: string
+          total_cost?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
