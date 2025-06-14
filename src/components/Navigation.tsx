@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Calculator, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -22,25 +23,25 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="/" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">
               Головна
-            </a>
-            <a href="/about" className="text-gray-700 hover:text-blue-600 transition-colors">
+            </Link>
+            <Link to="/about" className="text-gray-700 hover:text-blue-600 transition-colors">
               Про нас
-            </a>
-            <a href="/contacts" className="text-gray-700 hover:text-blue-600 transition-colors">
+            </Link>
+            <Link to="/contacts" className="text-gray-700 hover:text-blue-600 transition-colors">
               Контакти
-            </a>
+            </Link>
             {user ? (
-              <a href="/profile" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
+              <Link to="/profile" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
                 <User className="h-4 w-4 mr-1" />
                 Кабінет
-              </a>
+              </Link>
             ) : (
-              <a href="/auth" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
+              <Link to="/auth" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors">
                 <User className="h-4 w-4 mr-1" />
                 Увійти
-              </a>
+              </Link>
             )}
           </div>
 
@@ -61,45 +62,45 @@ const Navigation = () => {
         {isOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                 onClick={toggleMenu}
               >
                 Головна
-              </a>
-              <a
-                href="/about"
+              </Link>
+              <Link
+                to="/about"
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                 onClick={toggleMenu}
               >
                 Про нас
-              </a>
-              <a
-                href="/contacts"
+              </Link>
+              <Link
+                to="/contacts"
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                 onClick={toggleMenu}
               >
                 Контакти
-              </a>
+              </Link>
               {user ? (
-                <a
-                  href="/profile"
+                <Link
+                  to="/profile"
                   className="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                   onClick={toggleMenu}
                 >
                   <User className="h-4 w-4 mr-2" />
                   Особистий кабінет
-                </a>
+                </Link>
               ) : (
-                <a
-                  href="/auth"
+                <Link
+                  to="/auth"
                   className="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                   onClick={toggleMenu}
                 >
                   <User className="h-4 w-4 mr-2" />
                   Увійти
-                </a>
+                </Link>
               )}
             </div>
           </div>
