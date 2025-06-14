@@ -20,19 +20,21 @@ interface Service {
 }
 
 interface EstimateSectionProps {
-  selectedServices: Service[];
+  selectedServices: Record<string, number>;
   totalCost: number;
-  regionId: string;
   onRemoveService: (serviceId: string) => void;
-  onUpdateQuantity: (serviceId: string, quantity: number) => void;
+  onGeneratePDF: () => void;
+  onGenerateEstimate: () => void;
+  priceMultiplier?: number;
 }
 
 const EstimateSection = ({ 
   selectedServices, 
   totalCost, 
-  regionId,
   onRemoveService,
-  onUpdateQuantity 
+  onGeneratePDF,
+  onGenerateEstimate,
+  priceMultiplier = 1.0
 }: EstimateSectionProps) => {
   const [estimateTitle, setEstimateTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -49,7 +51,9 @@ const EstimateSection = ({
       return;
     }
 
-    if (selectedServices.length === 0) {
+    const selectedItems = Object.entries(selectedServices).filter(([_, area]) => area > 0);
+    
+    if (selectedItems.length === 0) {
       toast({
         title: "Увага",
         description: "Додайте послуги до кошторису перед збереженням",
@@ -68,12 +72,13 @@ const EstimateSection = ({
         .insert({
           custom_user_id: user.id,
           title,
-          region_id: regionId,
+          region_id: 'dnipro',
           selected_services: selectedServices,
           total_cost: totalCost
         });
 
       if (error) {
+        console.error('Save estimate error:', error);
         toast({
           title: "Помилка",
           description: "Не вдалося зберегти кошторис",
@@ -98,13 +103,17 @@ const EstimateSection = ({
     }
   };
 
-  const handleDownloadPDF = () => {
-    const title = estimateTitle.trim() || 'Кошторис';
-    generatePDF(selectedServices, totalCost, regionId, title);
-  };
+  const selectedItemsCount = Object.entries(selectedServices).filter(([_, area]) => area > 0).length;
 
-  if (selectedServices.length === 0) {
-    return null;
+  if (selectedItemsCount === 0) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-6 text-center">
+          <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-500 mb-4">Оберіть послуги для створення кошторису</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -112,21 +121,20 @@ const EstimateSection = ({
       <CardHeader>
         <CardTitle className="flex items-center">
           <FileText className="mr-2 h-5 w-5" />
-          Кошторис
+          Обрані послуги
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <EstimateTable 
-          services={selectedServices}
-          onRemoveService={onRemoveService}
-          onUpdateQuantity={onUpdateQuantity}
-        />
-        
-        <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
-          <span className="text-lg font-medium">Загальна вартість:</span>
-          <span className="text-2xl font-bold text-blue-600">
-            {formatCurrency(totalCost)}
-          </span>
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600">
+            Обрано послуг: {selectedItemsCount}
+          </p>
+          <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
+            <span className="text-lg font-medium">Загальна вартість:</span>
+            <span className="text-2xl font-bold text-blue-600">
+              {formatCurrency(totalCost)}
+            </span>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -147,7 +155,7 @@ const EstimateSection = ({
             </Button>
             
             <Button
-              onClick={handleDownloadPDF}
+              onClick={onGeneratePDF}
               variant="outline"
               className="flex-1"
             >
@@ -155,6 +163,15 @@ const EstimateSection = ({
               Завантажити PDF
             </Button>
           </div>
+          
+          <Button
+            onClick={onGenerateEstimate}
+            className="w-full"
+            variant="default"
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Переглянути детальний кошторис
+          </Button>
         </div>
       </CardContent>
     </Card>

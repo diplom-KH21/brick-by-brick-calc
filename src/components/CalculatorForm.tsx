@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useRef } from "react";
 import ServiceList, { ServiceListRef } from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
@@ -109,7 +110,7 @@ const CalculatorForm = () => {
       const { error } = await supabase
         .from('user_estimates')
         .insert({
-          user_id: user.id,
+          custom_user_id: user.id,
           title: `Кошторис від ${new Date().toLocaleDateString('uk-UA')}`,
           region_id: selectedRegion,
           selected_services: selectedServices,
@@ -117,6 +118,7 @@ const CalculatorForm = () => {
         });
 
       if (error) {
+        console.error('Save estimate error:', error);
         toast({
           title: "Помилка",
           description: "Не вдалося зберегти кошторис",
@@ -145,8 +147,8 @@ const CalculatorForm = () => {
 
       if (selectedItems.length === 0) {
         toast({
-          title: "Pomylka",
-          description: "Oberit' khocja b odnu posluhu dlja formuvannja koshtorysu",
+          title: "Помилка",
+          description: "Оберіть хоча б одну послугу для формування кошторису",
           variant: "destructive",
         });
         return;
@@ -155,15 +157,15 @@ const CalculatorForm = () => {
       generatePDF(selectedServices, totalCost);
 
       toast({
-        title: "PDF zgenerovano",
-        description: "Koshtorys uspishno zavantazheno u formati PDF",
+        title: "PDF згенеровано",
+        description: "Кошторис успішно завантажено у форматі PDF",
       });
 
     } catch (error) {
-      console.error('Pomylka generaciji PDF:', error);
+      console.error('Помилка генерації PDF:', error);
       toast({
-        title: "Pomylka",
-        description: "Ne vdalosja zgeneruvaty PDF fajl",
+        title: "Помилка",
+        description: "Не вдалося згенерувати PDF файл",
         variant: "destructive",
       });
     }
@@ -278,13 +280,15 @@ const CalculatorForm = () => {
         </div>
       )}
 
-      <EstimateTable
-        ref={estimateRef}
-        selectedServices={selectedServices}
-        totalCost={totalCost}
-        onGeneratePDF={handleGeneratePDF}
-        priceMultiplier={priceMultiplier}
-      />
+      {showEstimate && (
+        <EstimateTable
+          ref={estimateRef}
+          selectedServices={selectedServices}
+          totalCost={totalCost}
+          onGeneratePDF={handleGeneratePDF}
+          priceMultiplier={priceMultiplier}
+        />
+      )}
     </div>
   );
 };
