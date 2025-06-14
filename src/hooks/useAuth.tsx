@@ -38,8 +38,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (phone: string, password: string) => {
-    // Используем phone как email для аутентификации (без подтверждения)
-    const email = `${phone.replace(/[^0-9]/g, '')}@phone.local`;
+    // Создаем валидный email из номера телефона
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    const email = `${cleanPhone}@phoneauth.app`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -55,8 +56,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (phone: string, password: string) => {
-    // Используем phone как email для аутентификации
-    const email = `${phone.replace(/[^0-9]/g, '')}@phone.local`;
+    // Создаем валидный email из номера телефона
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    const email = `${cleanPhone}@phoneauth.app`;
     
     const { error } = await supabase.auth.signInWithPassword({
       email,
