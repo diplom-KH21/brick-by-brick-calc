@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/hooks/useAuth';
-import { Phone, Lock, LogIn, UserPlus } from 'lucide-react';
+import { User, Lock, LogIn, UserPlus } from 'lucide-react';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [phone, setPhone] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
@@ -21,7 +21,7 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (!phone || !password) {
+    if (!username || !password) {
       toast({
         title: "Помилка",
         description: "Заповніть всі поля",
@@ -31,10 +31,22 @@ const Auth = () => {
       return;
     }
 
+    // Проверяем, что логин содержит только английские буквы и цифры
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    if (!usernameRegex.test(username)) {
+      toast({
+        title: "Помилка",
+        description: "Логін може містити тільки англійські літери та цифри",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error } = isLogin 
-        ? await signIn(phone, password)
-        : await signUp(phone, password);
+        ? await signIn(username, password)
+        : await signUp(username, password);
 
       if (error) {
         toast({
@@ -74,17 +86,17 @@ const Auth = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="phone" className="text-sm font-medium text-gray-700">
-                Номер телефону
+              <label htmlFor="username" className="text-sm font-medium text-gray-700">
+                Логін
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="+380..."
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  id="username"
+                  type="text"
+                  placeholder="Введіть логін (англійські літери та цифри)"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="pl-10"
                 />
               </div>

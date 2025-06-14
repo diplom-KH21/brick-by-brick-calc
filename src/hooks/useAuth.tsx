@@ -7,8 +7,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (phone: string, password: string) => Promise<{ error: any }>;
-  signIn: (phone: string, password: string) => Promise<{ error: any }>;
+  signUp: (username: string, password: string) => Promise<{ error: any }>;
+  signIn: (username: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -37,17 +37,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (phone: string, password: string) => {
-    // Создаем валидный email из номера телефона
-    const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const email = `${cleanPhone}@phoneauth.app`;
+  const signUp = async (username: string, password: string) => {
+    // Создаем email из логина пользователя
+    const email = `${username}@userlogin.app`;
     
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          phone: phone
+          username: username
         },
         emailRedirectTo: `${window.location.origin}/`
       }
@@ -55,10 +54,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  const signIn = async (phone: string, password: string) => {
-    // Создаем валидный email из номера телефона
-    const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const email = `${cleanPhone}@phoneauth.app`;
+  const signIn = async (username: string, password: string) => {
+    // Создаем email из логина пользователя
+    const email = `${username}@userlogin.app`;
     
     const { error } = await supabase.auth.signInWithPassword({
       email,
