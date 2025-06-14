@@ -1,8 +1,8 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin } from "lucide-react";
+import LocationDetector from "./LocationDetector";
 
 export interface Region {
   id: string;
@@ -27,12 +27,26 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
   selectedRegion,
   onRegionChange,
 }) => {
+  const [isDetecting, setIsDetecting] = useState(false);
+
+  const handleLocationDetected = (regionId: string) => {
+    onRegionChange(regionId);
+  };
+
   return (
     <Card className="mb-6">
       <CardContent className="p-4">
-        <div className="flex items-center mb-3">
-          <MapPin className="h-5 w-5 text-blue-600 mr-2" />
-          <h3 className="text-lg font-semibold text-gray-900">Оберіть регіон</h3>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center">
+            <MapPin className="h-5 w-5 text-blue-600 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-900">Оберіть регіон</h3>
+          </div>
+          <LocationDetector
+            onLocationDetected={handleLocationDetected}
+            isDetecting={isDetecting}
+            onDetectionStart={() => setIsDetecting(true)}
+            onDetectionEnd={() => setIsDetecting(false)}
+          />
         </div>
         <div className="flex flex-wrap gap-2">
           {regions.map((region) => (
