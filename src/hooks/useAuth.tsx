@@ -36,12 +36,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (username: string, password: string) => {
     try {
+      console.log('Attempting to create user:', username);
       const { data, error } = await supabase.rpc('create_user', {
         p_username: username,
         p_password: password
       });
 
+      console.log('Create user response:', { data, error });
+
       if (error) {
+        console.error('Create user error:', error);
         return { error };
       }
 
@@ -51,29 +55,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       return { error: null };
     } catch (error) {
+      console.error('Sign up catch error:', error);
       return { error };
     }
   };
 
   const signIn = async (username: string, password: string) => {
     try {
+      console.log('Attempting to authenticate user:', username);
       const { data, error } = await supabase.rpc('authenticate_user', {
         p_username: username,
         p_password: password
       });
 
-      if (error || !data || data.length === 0) {
+      console.log('Authenticate user response:', { data, error });
+
+      if (error) {
+        console.error('Authentication error:', error);
+        return { error: { message: 'Помилка аутентифікації: ' + error.message } };
+      }
+
+      // Проверяем, что data существует и не пустой
+      if (!data || (Array.isArray(data) && data.length === 0)) {
+        console.log('No user data returned');
         return { error: { message: 'Неправильний логін або пароль' } };
       }
 
-      const userData = data[0];
+      // Обрабатываем данные пользователя
+      let userData;
+      if (Array.isArray(data)) {
+        userData = data[0];
+      } else {
+        userData = data;
+      }
+
+      console.log('User data:', userData);
+
+      if (!userData || !userData.user_id) {
+        console.log('Invalid user data structure');
+        return { error: { message: 'Неправильний логін або пароль' } };
+      }
+
       const authenticatedUser = { id: userData.user_id, username: userData.username };
       setUser(authenticatedUser);
       localStorage.setItem('auth_user', JSON.stringify(authenticatedUser));
       
       return { error: null };
     } catch (error) {
-      return { error };
+      console.error('Sign in catch error:', error);
+      return { error: { message: 'Помилка підключення до сервера' } };
     }
   };
 
