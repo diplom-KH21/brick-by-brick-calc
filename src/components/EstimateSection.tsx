@@ -71,7 +71,7 @@ const EstimateSection = ({
         .from('user_estimates')
         .insert({
           custom_user_id: user.id,
-          user_id: user.id, // Добавляем обязательное поле user_id
+          user_id: user.id,
           title,
           region_id: 'dnipro',
           selected_services: selectedServices,
@@ -171,7 +171,7 @@ const EstimateSection = ({
             variant="default"
           >
             <FileText className="mr-2 h-4 w-4" />
-            Переглянути детальний кошторис
+            Переглянути кошторис
           </Button>
         </div>
       </CardContent>

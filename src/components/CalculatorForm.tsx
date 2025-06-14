@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useRef } from "react";
 import ServiceList, { ServiceListRef } from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
@@ -11,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { FileText, Save } from "lucide-react";
+import { FileText } from "lucide-react";
 
 const CalculatorForm = () => {
   const [selectedServices, setSelectedServices] = useState<Record<string, number>>({});
@@ -80,63 +81,6 @@ const CalculatorForm = () => {
   const handleCategoryClick = (categoryId: string) => {
     if (serviceListRef.current) {
       serviceListRef.current.scrollToCategory(categoryId);
-    }
-  };
-
-  const saveEstimate = async () => {
-    if (!user) {
-      toast({
-        title: "Увійдіть в систему",
-        description: "Для збереження кошторису потрібно увійти в систему",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const selectedItems = Object.entries(selectedServices)
-      .filter(([_, area]) => area > 0);
-
-    if (selectedItems.length === 0) {
-      toast({
-        title: "Помилка",
-        description: "Оберіть хоча б одну послугу для збереження",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('user_estimates')
-        .insert({
-          custom_user_id: user.id,
-          user_id: user.id, // Добавляем обязательное поле user_id
-          title: `Кошторис від ${new Date().toLocaleDateString('uk-UA')}`,
-          region_id: selectedRegion,
-          selected_services: selectedServices,
-          total_cost: totalCost
-        });
-
-      if (error) {
-        console.error('Save estimate error:', error);
-        toast({
-          title: "Помилка",
-          description: "Не вдалося зберегти кошторис",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Успіх",
-          description: "Кошторис збережено в особистому кабінеті",
-        });
-      }
-    } catch (error) {
-      console.error('Error saving estimate:', error);
-      toast({
-        title: "Помилка",
-        description: "Не вдалося зберегти кошторис",
-        variant: "destructive",
-      });
     }
   };
 
@@ -237,46 +181,20 @@ const CalculatorForm = () => {
             onGenerateEstimate={handleGenerateEstimate}
             priceMultiplier={priceMultiplier}
           />
-          
-          {/* Save button */}
-          {user && totalCost > 0 && (
-            <div className="mt-4">
-              <Button
-                onClick={saveEstimate}
-                className="w-full bg-green-600 hover:bg-green-700"
-                size="sm"
-              >
-                <Save className="mr-2 h-4 w-4" />
-                Зберегти кошторис
-              </Button>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Mobile sticky estimate button - reduced by 10% and positioned higher */}
+      {/* Mobile sticky estimate button */}
       {totalCost > 0 && (
         <div className="lg:hidden fixed bottom-20 left-4 right-4 z-40">
-          <div className="space-y-2">
-            <Button 
-              onClick={handleGenerateEstimate}
-              className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg text-sm py-3"
-              size="default"
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Переглянути кошторис ({selectedItemsCount} послуг) - {formatCurrency(totalCost)}
-            </Button>
-            {user && (
-              <Button
-                onClick={saveEstimate}
-                className="w-full bg-green-600 hover:bg-green-700 shadow-lg text-sm py-2"
-                size="sm"
-              >
-                <Save className="mr-2 h-3 w-3" />
-                Зберегти
-              </Button>
-            )}
-          </div>
+          <Button 
+            onClick={handleGenerateEstimate}
+            className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg text-sm py-3"
+            size="default"
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Переглянути кошторис ({selectedItemsCount} послуг) - {formatCurrency(totalCost)}
+          </Button>
         </div>
       )}
 
