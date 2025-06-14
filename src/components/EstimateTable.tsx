@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Download } from "lucide-react";
 import { formatCurrency } from "@/utils/calculations";
 import { constructionServices } from "@/data/services";
+import SaveEstimateSection from "./SaveEstimateSection";
 
 interface EstimateTableProps {
   selectedServices: Record<string, number>;
@@ -106,6 +107,12 @@ const EstimateTable = forwardRef<HTMLDivElement, EstimateTableProps>(
             </div>
           </CardContent>
         </Card>
+        
+        {/* Добавляем компонент сохранения кошториса под зеленой таблицей */}
+        <SaveEstimateSection 
+          selectedServices={selectedServices}
+          totalCost={totalCost}
+        />
       </div>
     );
   }
