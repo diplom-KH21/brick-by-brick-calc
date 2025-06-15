@@ -6,7 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrency } from '@/utils/calculations';
-import { generatePDF } from '@/utils/pdfGenerator';
+import { generatePDFWithData } from '@/utils/pdfGenerator';
+import { usePrices } from '@/hooks/usePrices';
 import Navigation from '@/components/Navigation';
 import { User, LogOut, FileText, Trash2, Plus, Download } from 'lucide-react';
 
@@ -25,6 +26,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [estimates, setEstimates] = useState<UserEstimate[]>([]);
   const [loading, setLoading] = useState(true);
+  const { getPriceByServiceId } = usePrices();
 
   useEffect(() => {
     if (!user) {
@@ -119,10 +121,36 @@ const Profile = () => {
     try {
       console.log('Downloading estimate:', estimate);
       
-      // Преобразуем selected_services в нужный формат для generatePDF
       const selectedServices = estimate.selected_services || {};
       
-      generatePDF(selectedServices, estimate.total_cost);
+      // Получаем данные о услугах из базы для PDF
+      const selectedItems = Object.entries(selectedServices)
+        .filter(([_, area]) => (area as number) > 0);
+
+      if (selectedItems.length === 0) {
+        toast({
+          title: "Помилка",
+          description: "В кошторисі немає обраних послуг",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Подготавливаем данные для PDF
+      const servicesData = selectedItems.map(([serviceId, _]) => {
+        const service = getPriceByServiceId(serviceId);
+        if (service) {
+          return {
+            service_id: service.service_id,
+            service_name: service.service_name,
+            price: service.price,
+            unit: service.unit
+          };
+        }
+        return null;
+      }).filter(Boolean) as Array<{ service_id: string; service_name: string; price: number; unit: string; }>;
+
+      generatePDFWithData(selectedServices, estimate.total_cost, servicesData);
       
       toast({
         title: "Успіх",
