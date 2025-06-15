@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Download } from "lucide-react";
 import { formatCurrency } from "@/utils/calculations";
-import { constructionServices } from "@/data/services";
+import { usePrices } from "@/hooks/usePrices";
 import SaveEstimateSection from "./SaveEstimateSection";
 
 interface EstimateTableProps {
@@ -16,6 +16,8 @@ interface EstimateTableProps {
 
 const EstimateTable = forwardRef<HTMLDivElement, EstimateTableProps>(
   ({ selectedServices, totalCost, onGeneratePDF, priceMultiplier = 1.0 }, ref) => {
+    const { getPriceByServiceId } = usePrices();
+    
     const selectedItems = Object.entries(selectedServices)
       .filter(([_, area]) => area > 0);
 
@@ -50,13 +52,13 @@ const EstimateTable = forwardRef<HTMLDivElement, EstimateTableProps>(
                   </thead>
                   <tbody>
                     {selectedItems.map(([serviceId, area]) => {
-                      const serviceData = constructionServices.find(s => s.id === serviceId);
+                      const serviceData = getPriceByServiceId(serviceId);
                       const adjustedPrice = (serviceData?.price || 0) * priceMultiplier;
                       const serviceCost = adjustedPrice * area;
                       return (
                         <tr key={serviceId} className="hover:bg-gray-50">
                           <td className="border border-gray-300 px-4 py-3 font-medium">
-                            {serviceData?.name}
+                            {serviceData?.service_name}
                           </td>
                           <td className="border border-gray-300 px-4 py-3 text-center">
                             {area}
@@ -108,7 +110,6 @@ const EstimateTable = forwardRef<HTMLDivElement, EstimateTableProps>(
           </CardContent>
         </Card>
         
-        {/* Добавляем компонент сохранения кошториса под зеленой таблицей */}
         <SaveEstimateSection 
           selectedServices={selectedServices}
           totalCost={totalCost}

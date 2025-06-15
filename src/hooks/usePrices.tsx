@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { constructionServices } from '@/data/services';
 import { useToast } from '@/hooks/use-toast';
 
 export interface Price {
@@ -23,26 +23,24 @@ export const usePrices = () => {
 
   const fetchPrices = async () => {
     try {
-      console.log('Fetching prices from database...');
+      console.log('Using static data for prices...');
       
-      const { data, error } = await supabase
-        .from('prices')
-        .select('*')
-        .order('service_name');
+      // Конвертируем статические данные в формат Price
+      const convertedPrices: Price[] = constructionServices.map(service => ({
+        id: service.id,
+        service_id: service.id,
+        service_name: service.name,
+        price: service.price,
+        unit: service.unit,
+        category: service.category,
+        region_id: 'default',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
 
-      if (error) {
-        console.error('Error fetching prices:', error);
-        setError(error.message);
-        toast({
-          title: "Помилка",
-          description: "Не вдалося завантажити ціни з бази даних",
-          variant: "destructive",
-        });
-      } else {
-        console.log('Prices loaded successfully:', data?.length, 'items');
-        setPrices(data || []);
-        setError(null);
-      }
+      console.log('Prices loaded successfully:', convertedPrices.length, 'items');
+      setPrices(convertedPrices);
+      setError(null);
     } catch (err) {
       console.error('Error in fetchPrices:', err);
       setError('Виникла помилка при завантаженні цін');
