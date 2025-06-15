@@ -86,6 +86,42 @@ export type Database = {
         }
         Relationships: []
       }
+      prices: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          price: number
+          region_id: string | null
+          service_id: string
+          service_name: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          price: number
+          region_id?: string | null
+          service_id: string
+          service_name: string
+          unit: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          price?: number
+          region_id?: string | null
+          service_id?: string
+          service_name?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
