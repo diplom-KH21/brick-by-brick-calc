@@ -7,7 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrency } from '@/utils/calculations';
-import { User, LogOut, FileText, Trash2, Plus } from 'lucide-react';
+import { generatePDF } from '@/utils/pdfGenerator';
+import { User, LogOut, FileText, Trash2, Plus, Download } from 'lucide-react';
 
 interface UserEstimate {
   id: string;
@@ -114,6 +115,29 @@ const Profile = () => {
     }
   };
 
+  const downloadEstimate = async (estimate: UserEstimate) => {
+    try {
+      console.log('Downloading estimate:', estimate);
+      
+      // Преобразуем selected_services в нужный формат для generatePDF
+      const selectedServices = estimate.selected_services || {};
+      
+      generatePDF(selectedServices, estimate.total_cost);
+      
+      toast({
+        title: "Успіх",
+        description: "Кошторис завантажено",
+      });
+    } catch (error) {
+      console.error('Error downloading estimate:', error);
+      toast({
+        title: "Помилка",
+        description: "Виникла помилка при завантаженні кошторису",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (!user) {
     return null;
   }
@@ -192,14 +216,24 @@ const Profile = () => {
                       <span className="text-lg font-semibold text-blue-600">
                         {formatCurrency(estimate.total_cost)}
                       </span>
-                      <Button
-                        onClick={() => deleteEstimate(estimate.id)}
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          onClick={() => downloadEstimate(estimate)}
+                          variant="outline"
+                          size="sm"
+                          className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          onClick={() => deleteEstimate(estimate.id)}
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
