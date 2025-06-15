@@ -35,17 +35,24 @@ const Profile = () => {
   }, [user, navigate]);
 
   const fetchEstimates = async () => {
+    if (!user) return;
+    
     try {
+      console.log('Fetching estimates for user:', user.id);
+      
       const { data, error } = await supabase
         .from('user_estimates')
         .select('*')
-        .eq('custom_user_id', user?.id)
+        .eq('custom_user_id', user.id)
         .order('created_at', { ascending: false });
 
+      console.log('Fetch estimates response:', { data, error });
+
       if (error) {
+        console.error('Fetch estimates error:', error);
         toast({
           title: "Помилка",
-          description: "Не вдалося завантажити кошториси",
+          description: "Не вдалося завантажити кошториси: " + error.message,
           variant: "destructive",
         });
       } else {
@@ -53,6 +60,11 @@ const Profile = () => {
       }
     } catch (error) {
       console.error('Error fetching estimates:', error);
+      toast({
+        title: "Помилка",
+        description: "Виникла помилка при завантаженні кошторисів",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -82,7 +94,7 @@ const Profile = () => {
       if (error) {
         toast({
           title: "Помилка",
-          description: "Не вдалося видалити кошторис",
+          description: "Не вдалося видалити кошторис: " + error.message,
           variant: "destructive",
         });
       } else {
@@ -94,6 +106,11 @@ const Profile = () => {
       }
     } catch (error) {
       console.error('Error deleting estimate:', error);
+      toast({
+        title: "Помилка",
+        description: "Виникла помилка при видаленні кошторису",
+        variant: "destructive",
+      });
     }
   };
 

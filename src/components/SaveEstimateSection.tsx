@@ -49,15 +49,17 @@ const SaveEstimateSection = ({ selectedServices, totalCost }: SaveEstimateSectio
       console.log('Selected services:', selectedServices);
       console.log('Total cost:', totalCost);
       
+      // Используем только custom_user_id, так как наша система не использует Supabase Auth
       const { error } = await supabase
         .from('user_estimates')
         .insert({
           custom_user_id: user.id,
-          user_id: user.id, // Используем тот же ID для совместимости
           title,
           region_id: 'dnipro',
           selected_services: selectedServices,
-          total_cost: totalCost
+          total_cost: totalCost,
+          // Оставляем user_id пустым, так как мы не используем Supabase Auth
+          user_id: '00000000-0000-0000-0000-000000000000' // placeholder UUID
         });
 
       if (error) {
