@@ -6,7 +6,7 @@ import EstimateSection from "./EstimateSection";
 import EstimateTable from "./EstimateTable";
 import RegionSelector, { regions } from "./RegionSelector";
 import { formatCurrency } from "@/utils/calculations";
-import { generatePDF } from "@/utils/pdfGenerator";
+import { generatePDFWithData } from "@/utils/pdfGenerator";
 import { usePrices } from "@/hooks/usePrices";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -108,7 +108,21 @@ const CalculatorForm = () => {
         return acc;
       }, {} as Record<string, number>);
 
-      generatePDF(servicesForPDF, totalCost);
+      // Prepare services data with adjusted prices
+      const servicesData = selectedItems.map(([serviceId, _]) => {
+        const service = getPriceByServiceId(serviceId);
+        if (service) {
+          return {
+            service_id: service.service_id,
+            service_name: service.service_name,
+            price: service.price * priceMultiplier,
+            unit: service.unit
+          };
+        }
+        return null;
+      }).filter(Boolean) as Array<{ service_id: string; service_name: string; price: number; unit: string; }>;
+
+      generatePDFWithData(servicesForPDF, totalCost, servicesData);
 
       toast({
         title: "PDF згенеровано",
