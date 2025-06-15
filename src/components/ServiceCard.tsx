@@ -4,17 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/utils/calculations";
-
-interface Service {
-  id: string;
-  name: string;
-  price: number;
-  unit: string;
-  category: string;
-}
+import { Price } from "@/hooks/usePrices";
 
 interface ServiceCardProps {
-  service: Service;
+  service: Price;
   area: number;
   onAreaChange: (area: number) => void;
   priceMultiplier?: number;
@@ -33,7 +26,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       <CardContent className="p-3 md:p-4">
         <div className="space-y-2 md:space-y-3">
           <Label className="text-xs md:text-sm font-medium leading-tight">
-            {service.name}
+            {service.service_name}
           </Label>
           <div className="text-xs md:text-sm text-gray-600">
             {formatCurrency(adjustedPrice)} за {service.unit}

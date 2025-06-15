@@ -22,3 +22,20 @@ export const calculateTotal = (
     return total;
   }, 0);
 };
+
+// Новая функция для работы с ценами из базы данных
+export const calculateTotalFromDatabase = (
+  selectedServices: Record<string, number>,
+  getPriceByServiceId: (serviceId: string) => { price: number } | undefined,
+  priceMultiplier: number = 1.0
+): number => {
+  return Object.entries(selectedServices).reduce((total, [serviceId, quantity]) => {
+    if (quantity > 0) {
+      const service = getPriceByServiceId(serviceId);
+      if (service) {
+        return total + (service.price * quantity * priceMultiplier);
+      }
+    }
+    return total;
+  }, 0);
+};

@@ -7,7 +7,7 @@ import EstimateTable from "./EstimateTable";
 import RegionSelector, { regions } from "./RegionSelector";
 import { formatCurrency } from "@/utils/calculations";
 import { generatePDF } from "@/utils/pdfGenerator";
-import { constructionServices } from "@/data/services";
+import { usePrices } from "@/hooks/usePrices";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +22,7 @@ const CalculatorForm = () => {
   const [showEstimate, setShowEstimate] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { prices, getPriceByServiceId } = usePrices();
   const estimateRef = useRef<HTMLDivElement>(null);
   const serviceListRef = useRef<ServiceListRef>(null);
 
@@ -38,7 +39,7 @@ const CalculatorForm = () => {
     
     // Calculate total cost with regional multiplier
     const total = Object.entries(updatedServices).reduce((sum, [id, quantity]) => {
-      const service = constructionServices.find(s => s.id === id);
+      const service = getPriceByServiceId(id);
       return sum + (service ? service.price * quantity * priceMultiplier : 0);
     }, 0);
     
@@ -52,7 +53,7 @@ const CalculatorForm = () => {
     
     // Recalculate total cost with regional multiplier
     const total = Object.entries(updatedServices).reduce((sum, [id, quantity]) => {
-      const service = constructionServices.find(s => s.id === id);
+      const service = getPriceByServiceId(id);
       return sum + (service ? service.price * quantity * priceMultiplier : 0);
     }, 0);
     
@@ -66,7 +67,7 @@ const CalculatorForm = () => {
     
     // Recalculate total cost with new regional multiplier
     const total = Object.entries(selectedServices).reduce((sum, [id, quantity]) => {
-      const service = constructionServices.find(s => s.id === id);
+      const service = getPriceByServiceId(id);
       return sum + (service ? service.price * quantity * newMultiplier : 0);
     }, 0);
     
@@ -98,7 +99,16 @@ const CalculatorForm = () => {
         return;
       }
 
-      generatePDF(selectedServices, totalCost);
+      // Prepare services data for PDF generation
+      const servicesForPDF = selectedItems.reduce((acc, [serviceId, area]) => {
+        const service = getPriceByServiceId(serviceId);
+        if (service) {
+          acc[serviceId] = area;
+        }
+        return acc;
+      }, {} as Record<string, number>);
+
+      generatePDF(servicesForPDF, totalCost);
 
       toast({
         title: "PDF згенеровано",

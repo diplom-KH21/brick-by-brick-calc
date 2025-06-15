@@ -2,8 +2,9 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ServiceCard from "./ServiceCard";
-import { constructionServices, categories } from "@/data/services";
-import { Calculator } from "lucide-react";
+import { categories } from "@/data/services";
+import { usePrices } from "@/hooks/usePrices";
+import { Calculator, Loader2 } from "lucide-react";
 
 interface ServiceListProps {
   selectedServices: Record<string, number>;
@@ -24,6 +25,7 @@ const ServiceList = forwardRef<ServiceListRef, ServiceListProps>(({
 }, ref) => {
   const [visibleCategory, setVisibleCategory] = useState<string>("");
   const categoryRefs = useRef<Record<string, HTMLDivElement>>({});
+  const { prices, loading, error } = usePrices();
 
   useImperativeHandle(ref, () => ({
     scrollToCategory: (categoryId: string) => {
@@ -62,10 +64,31 @@ const ServiceList = forwardRef<ServiceListRef, ServiceListProps>(({
     return () => observer.disconnect();
   }, [visibleCategory, onCategoryChange]);
 
+  if (loading) {
+    return (
+      <Card className="shadow-lg">
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin mr-2" />
+          <span>Завантаження послуг...</span>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="shadow-lg">
+        <CardContent className="text-center py-12">
+          <p className="text-red-600">Помилка завантаження: {error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Group services by category
   const servicesByCategory = categories.map(category => ({
     category,
-    services: constructionServices.filter(service => service.category === category.id)
+    services: prices.filter(service => service.category === category.id)
   })).filter(group => group.services.length > 0);
 
   return (
@@ -94,10 +117,10 @@ const ServiceList = forwardRef<ServiceListRef, ServiceListProps>(({
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-4">
                 {services.map((service) => (
                   <ServiceCard
-                    key={service.id}
+                    key={service.service_id}
                     service={service}
-                    area={selectedServices[service.id] || 0}
-                    onAreaChange={(area) => onAreaChange(service.id, area)}
+                    area={selectedServices[service.service_id] || 0}
+                    onAreaChange={(area) => onAreaChange(service.service_id, area)}
                     priceMultiplier={priceMultiplier}
                   />
                 ))}
