@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatCurrency } from '@/utils/calculations';
 import { generatePDFWithData } from '@/utils/pdfGenerator';
 import { usePrices } from '@/hooks/usePrices';
+import { regions } from '@/components/RegionSelector';
 import Navigation from '@/components/Navigation';
 import { User, LogOut, FileText, Trash2, Plus, Download } from 'lucide-react';
 
@@ -123,6 +125,10 @@ const Profile = () => {
       
       const selectedServices = estimate.selected_services || {};
       
+      // Получаем региональный множитель
+      const currentRegion = regions.find(r => r.id === estimate.region_id);
+      const priceMultiplier = currentRegion?.priceMultiplier || 1.0;
+      
       // Получаем данные о услугах из базы для PDF
       const selectedItems = Object.entries(selectedServices)
         .filter(([_, area]) => (area as number) > 0);
@@ -136,19 +142,23 @@ const Profile = () => {
         return;
       }
 
-      // Подготавливаем данные для PDF
+      // Подготавливаем данные для PDF с учетом регионального множителя
       const servicesData = selectedItems.map(([serviceId, _]) => {
         const service = getPriceByServiceId(serviceId);
         if (service) {
           return {
             service_id: service.service_id,
             service_name: service.service_name,
-            price: service.price,
+            price: service.price * priceMultiplier, // Применяем региональный множитель
             unit: service.unit
           };
         }
         return null;
       }).filter(Boolean) as Array<{ service_id: string; service_name: string; price: number; unit: string; }>;
+
+      console.log('Services data for PDF:', servicesData);
+      console.log('Selected services:', selectedServices);
+      console.log('Price multiplier:', priceMultiplier);
 
       generatePDFWithData(selectedServices, estimate.total_cost, servicesData);
       
