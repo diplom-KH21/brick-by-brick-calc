@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { constructionServices } from '@/data/services';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export interface Price {
@@ -23,23 +23,21 @@ export const usePrices = () => {
 
   const fetchPrices = async () => {
     try {
-      console.log('Using static data for prices...');
+      console.log('Fetching prices from database...');
       
-      // Конвертируем статические данные в формат Price
-      const convertedPrices: Price[] = constructionServices.map(service => ({
-        id: service.id,
-        service_id: service.id,
-        service_name: service.name,
-        price: service.price,
-        unit: service.unit,
-        category: service.category,
-        region_id: 'default',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }));
+      const { data, error } = await supabase
+        .from('prices')
+        .select('*')
+        .order('category', { ascending: true })
+        .order('service_name', { ascending: true });
 
-      console.log('Prices loaded successfully:', convertedPrices.length, 'items');
-      setPrices(convertedPrices);
+      if (error) {
+        console.error('Error fetching prices:', error);
+        throw error;
+      }
+
+      console.log('Prices loaded successfully:', data?.length, 'items');
+      setPrices(data || []);
       setError(null);
     } catch (err) {
       console.error('Error in fetchPrices:', err);
