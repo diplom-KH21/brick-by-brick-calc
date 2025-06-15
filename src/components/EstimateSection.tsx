@@ -56,26 +56,26 @@ const EstimateSection = ({
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex gap-2">
-            <Button
-              onClick={onGeneratePDF}
-              variant="outline"
-              className="flex-1"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Завантажити PDF
-            </Button>
-            
-            <Button
-              onClick={onGenerateEstimate}
-              className="flex-1"
-              variant="default"
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Переглянути кошторис
-            </Button>
-          </div>
+        <div className="space-y-3">
+          <Button
+            onClick={onGeneratePDF}
+            variant="outline"
+            className="w-full text-sm"
+            size="sm"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Завантажити PDF
+          </Button>
+          
+          <Button
+            onClick={onGenerateEstimate}
+            className="w-full text-sm"
+            variant="default"
+            size="sm"
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Переглянути кошторис
+          </Button>
         </div>
       </CardContent>
     </Card>
