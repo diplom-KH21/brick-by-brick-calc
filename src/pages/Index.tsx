@@ -1,3 +1,6 @@
+
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import CalculatorForm from "@/components/CalculatorForm";
 import BackgroundScraper from "@/components/BackgroundScraper";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -5,6 +8,8 @@ import Navigation from "@/components/Navigation";
 import { Calculator } from "lucide-react";
 
 const Index = () => {
+  const location = useLocation();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
       {/* Скрытый парсер работает в фоне */}
@@ -32,7 +37,7 @@ const Index = () => {
       {/* Calculator */}
       <section className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <CalculatorForm />
+          <CalculatorForm editData={location.state?.editEstimate} />
         </div>
       </section>
 

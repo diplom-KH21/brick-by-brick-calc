@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { generatePDFWithData } from '@/utils/pdfGenerator';
 import { usePrices } from '@/hooks/usePrices';
 import { regions } from '@/components/RegionSelector';
 import Navigation from '@/components/Navigation';
-import { User, LogOut, FileText, Trash2, Plus, Download } from 'lucide-react';
+import { User, LogOut, FileText, Trash2, Plus, Download, Edit } from 'lucide-react';
 
 interface UserEstimate {
   id: string;
@@ -176,6 +175,21 @@ const Profile = () => {
     }
   };
 
+  const editEstimate = (estimate: UserEstimate) => {
+    // Передаем данные кошторису через state при навигации
+    navigate('/', { 
+      state: { 
+        editEstimate: {
+          id: estimate.id,
+          title: estimate.title,
+          regionId: estimate.region_id,
+          selectedServices: estimate.selected_services,
+          totalCost: estimate.total_cost
+        }
+      }
+    });
+  };
+
   if (!user) {
     return null;
   }
@@ -258,6 +272,14 @@ const Profile = () => {
                         {formatCurrency(estimate.total_cost)}
                       </span>
                       <div className="flex items-center space-x-2">
+                        <Button
+                          onClick={() => editEstimate(estimate)}
+                          variant="outline"
+                          size="sm"
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
                         <Button
                           onClick={() => downloadEstimate(estimate)}
                           variant="outline"

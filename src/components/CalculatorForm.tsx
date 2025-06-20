@@ -1,5 +1,4 @@
-
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import ServiceList, { ServiceListRef } from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
 import EstimateSection from "./EstimateSection";
@@ -12,14 +11,27 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { FileText } from "lucide-react";
+import { FileText, Edit } from "lucide-react";
 
-const CalculatorForm = () => {
+interface EditData {
+  id: string;
+  title: string;
+  regionId: string;
+  selectedServices: Record<string, number>;
+  totalCost: number;
+}
+
+interface CalculatorFormProps {
+  editData?: EditData;
+}
+
+const CalculatorForm = ({ editData }: CalculatorFormProps) => {
   const [selectedServices, setSelectedServices] = useState<Record<string, number>>({});
   const [totalCost, setTotalCost] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedRegion, setSelectedRegion] = useState("dnipro");
   const [showEstimate, setShowEstimate] = useState(false);
+  const [editingEstimateId, setEditingEstimateId] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const { prices, getPriceByServiceId } = usePrices();
@@ -28,6 +40,32 @@ const CalculatorForm = () => {
 
   const currentRegion = regions.find(r => r.id === selectedRegion);
   const priceMultiplier = currentRegion?.priceMultiplier || 1.0;
+
+  // Загружаем данные для редактирования при монтировании компонента
+  useEffect(() => {
+    if (editData) {
+      console.log('Loading edit data:', editData);
+      setSelectedServices(editData.selectedServices);
+      setSelectedRegion(editData.regionId);
+      setEditingEstimateId(editData.id);
+      
+      // Пересчитываем стоимость с учетом регионального множителя
+      const region = regions.find(r => r.id === editData.regionId);
+      const multiplier = region?.priceMultiplier || 1.0;
+      
+      const total = Object.entries(editData.selectedServices).reduce((sum, [id, quantity]) => {
+        const service = getPriceByServiceId(id);
+        return sum + (service ? service.price * quantity * multiplier : 0);
+      }, 0);
+      
+      setTotalCost(total);
+      
+      toast({
+        title: "Режим редагування",
+        description: `Завантажено кошторис "${editData.title}" для редагування`,
+      });
+    }
+  }, [editData, getPriceByServiceId, toast]);
 
   const handleAreaChange = (serviceId: string, area: number) => {
     const updatedServices = {
@@ -171,6 +209,21 @@ const CalculatorForm = () => {
 
   return (
     <div className="space-y-8">
+      {/* Индикатор режима редактирования */}
+      {editingEstimateId && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <Edit className="h-5 w-5 text-blue-600 mr-2" />
+            <span className="text-blue-800 font-medium">
+              Режим редагування кошторису
+            </span>
+          </div>
+          <p className="text-blue-600 text-sm mt-1">
+            Ви редагуєте збережений кошторис. Внесіть зміни та збережіть оновлений варіант.
+          </p>
+        </div>
+      )}
+
       {/* Region Selector */}
       <RegionSelector
         selectedRegion={selectedRegion}
