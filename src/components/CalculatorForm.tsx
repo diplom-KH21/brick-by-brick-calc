@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import ServiceList, { ServiceListRef } from "./ServiceList";
 import CategorySidebar from "./CategorySidebar";
@@ -77,6 +78,13 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
     }
   }, [pricesLoading, editDataLoaded, editData, getPriceByServiceId]);
 
+  // Добавляем отдельный useEffect для пересчета при изменении selectedServices
+  useEffect(() => {
+    if (!pricesLoading) {
+      recalculateTotal(selectedServices, priceMultiplier);
+    }
+  }, [selectedServices, priceMultiplier, pricesLoading, getPriceByServiceId]);
+
   const handleAreaChange = (serviceId: string, area: number) => {
     const updatedServices = {
       ...selectedServices,
@@ -84,14 +92,12 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
     };
     
     setSelectedServices(updatedServices);
-    recalculateTotal(updatedServices, priceMultiplier);
   };
 
   const removeService = (serviceId: string) => {
     const updatedServices = { ...selectedServices };
     delete updatedServices[serviceId];
     setSelectedServices(updatedServices);
-    recalculateTotal(updatedServices, priceMultiplier);
   };
 
   const handleRegionChange = (regionId: string) => {
