@@ -35,12 +35,22 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
   const [editDataLoaded, setEditDataLoaded] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  const { prices, getPriceByServiceId } = usePrices();
+  const { prices, getPriceByServiceId, loading: pricesLoading } = usePrices();
   const estimateRef = useRef<HTMLDivElement>(null);
   const serviceListRef = useRef<ServiceListRef>(null);
 
   const currentRegion = regions.find(r => r.id === selectedRegion);
   const priceMultiplier = currentRegion?.priceMultiplier || 1.0;
+
+  // Функция для пересчета стоимости
+  const recalculateTotal = (services: Record<string, number>, multiplier: number) => {
+    const total = Object.entries(services).reduce((sum, [id, quantity]) => {
+      const service = getPriceByServiceId(id);
+      return sum + (service ? service.price * quantity * multiplier : 0);
+    }, 0);
+    setTotalCost(total);
+    return total;
+  };
 
   // Загружаем данные для редактирования при монтировании компонента
   useEffect(() => {
@@ -51,23 +61,21 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
       setEditingEstimateId(editData.id);
       setEditDataLoaded(true);
       
-      // Пересчитываем стоимость с учетом регионального множителя
-      const region = regions.find(r => r.id === editData.regionId);
-      const multiplier = region?.priceMultiplier || 1.0;
-      
-      const total = Object.entries(editData.selectedServices).reduce((sum, [id, quantity]) => {
-        const service = getPriceByServiceId(id);
-        return sum + (service ? service.price * quantity * multiplier : 0);
-      }, 0);
-      
-      setTotalCost(total);
-      
       toast({
         title: "Режим редагування",
         description: `Завантажено кошторис "${editData.title}" для редагування`,
       });
     }
-  }, [editData, editDataLoaded, getPriceByServiceId, toast]);
+  }, [editData, editDataLoaded, toast]);
+
+  // Пересчитываем стоимость когда загружены цены или изменились услуги/регион
+  useEffect(() => {
+    if (!pricesLoading && editDataLoaded && editData) {
+      const region = regions.find(r => r.id === editData.regionId);
+      const multiplier = region?.priceMultiplier || 1.0;
+      recalculateTotal(editData.selectedServices, multiplier);
+    }
+  }, [pricesLoading, editDataLoaded, editData, getPriceByServiceId]);
 
   const handleAreaChange = (serviceId: string, area: number) => {
     const updatedServices = {
@@ -76,28 +84,14 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
     };
     
     setSelectedServices(updatedServices);
-    
-    // Calculate total cost with regional multiplier
-    const total = Object.entries(updatedServices).reduce((sum, [id, quantity]) => {
-      const service = getPriceByServiceId(id);
-      return sum + (service ? service.price * quantity * priceMultiplier : 0);
-    }, 0);
-    
-    setTotalCost(total);
+    recalculateTotal(updatedServices, priceMultiplier);
   };
 
   const removeService = (serviceId: string) => {
     const updatedServices = { ...selectedServices };
     delete updatedServices[serviceId];
     setSelectedServices(updatedServices);
-    
-    // Recalculate total cost with regional multiplier
-    const total = Object.entries(updatedServices).reduce((sum, [id, quantity]) => {
-      const service = getPriceByServiceId(id);
-      return sum + (service ? service.price * quantity * priceMultiplier : 0);
-    }, 0);
-    
-    setTotalCost(total);
+    recalculateTotal(updatedServices, priceMultiplier);
   };
 
   const handleRegionChange = (regionId: string) => {
@@ -105,13 +99,7 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
     const newRegion = regions.find(r => r.id === regionId);
     const newMultiplier = newRegion?.priceMultiplier || 1.0;
     
-    // Recalculate total cost with new regional multiplier
-    const total = Object.entries(selectedServices).reduce((sum, [id, quantity]) => {
-      const service = getPriceByServiceId(id);
-      return sum + (service ? service.price * quantity * newMultiplier : 0);
-    }, 0);
-    
-    setTotalCost(total);
+    recalculateTotal(selectedServices, newMultiplier);
 
     toast({
       title: "Регіон змінено",
