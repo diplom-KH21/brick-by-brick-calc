@@ -32,6 +32,7 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
   const [selectedRegion, setSelectedRegion] = useState("dnipro");
   const [showEstimate, setShowEstimate] = useState(false);
   const [editingEstimateId, setEditingEstimateId] = useState<string | null>(null);
+  const [editDataLoaded, setEditDataLoaded] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const { prices, getPriceByServiceId } = usePrices();
@@ -43,11 +44,12 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
 
   // Загружаем данные для редактирования при монтировании компонента
   useEffect(() => {
-    if (editData) {
+    if (editData && !editDataLoaded) {
       console.log('Loading edit data:', editData);
       setSelectedServices(editData.selectedServices);
       setSelectedRegion(editData.regionId);
       setEditingEstimateId(editData.id);
+      setEditDataLoaded(true);
       
       // Пересчитываем стоимость с учетом регионального множителя
       const region = regions.find(r => r.id === editData.regionId);
@@ -65,7 +67,7 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
         description: `Завантажено кошторис "${editData.title}" для редагування`,
       });
     }
-  }, [editData, getPriceByServiceId, toast]);
+  }, [editData, editDataLoaded, getPriceByServiceId, toast]);
 
   const handleAreaChange = (serviceId: string, area: number) => {
     const updatedServices = {
