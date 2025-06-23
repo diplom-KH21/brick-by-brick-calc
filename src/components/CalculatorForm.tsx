@@ -276,7 +276,7 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
 
       {/* Mobile sticky estimate button - показываем когда есть стоимость и пользователь не внизу */}
       {totalCost > 0 && !isAtBottom && (
-        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-20">
+        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-40">
           <Button 
             onClick={handleGenerateEstimate}
             className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg text-xs py-2.5"
