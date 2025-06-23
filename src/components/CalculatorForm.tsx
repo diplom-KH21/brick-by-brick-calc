@@ -258,14 +258,14 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
       </div>
 
       {/* Mobile sticky estimate button */}
-      {totalCost > 0 && (
-        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-40">
+      {totalCost > 0 && !showEstimate && (
+        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-30">
           <Button 
             onClick={handleGenerateEstimate}
-            className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg text-sm py-3"
-            size="default"
+            className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg text-xs py-2.5"
+            size="sm"
           >
-            <FileText className="mr-2 h-4 w-4" />
+            <FileText className="mr-2 h-3 w-3" />
             Переглянути кошторис ({selectedItemsCount} послуг) - {formatCurrency(totalCost)}
           </Button>
         </div>

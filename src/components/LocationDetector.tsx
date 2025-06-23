@@ -68,14 +68,15 @@ const LocationDetector: React.FC<LocationDetectorProps> = ({
       variant="outline"
       size="sm"
       disabled={isDetecting}
-      className="text-blue-600 border-blue-200 hover:bg-blue-50"
+      className="text-blue-600 border-blue-200 hover:bg-blue-50 text-xs px-2 py-1 sm:text-sm sm:px-3 sm:py-2"
     >
       {isDetecting ? (
-        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+        <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 animate-spin" />
       ) : (
-        <MapPin className="h-4 w-4 mr-2" />
+        <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
       )}
-      {isDetecting ? "Визначення..." : "Визначити автоматично"}
+      <span className="hidden sm:inline">Визначити автоматично</span>
+      <span className="sm:hidden">Автоматично</span>
     </Button>
   );
 };

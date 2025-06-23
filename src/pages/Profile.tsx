@@ -199,34 +199,37 @@ const Profile = () => {
       {/* Navigation Header */}
       <Navigation />
       
-      <div className="max-w-6xl mx-auto p-4">
+      <div className="max-w-6xl mx-auto p-2 sm:p-4">
         {/* Header */}
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        <Card className="mb-4 sm:mb-6">
+          <CardHeader className="p-3 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
               <div className="flex items-center">
-                <User className="h-8 w-8 text-blue-600 mr-3" />
+                <User className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mr-2 sm:mr-3" />
                 <div>
-                  <CardTitle className="text-2xl">Особистий кабінет</CardTitle>
-                  <p className="text-gray-600 mt-1">
+                  <CardTitle className="text-lg sm:text-2xl">Особистий кабінет</CardTitle>
+                  <p className="text-gray-600 mt-1 text-sm">
                     Логін: {user.username}
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button 
                   onClick={() => navigate('/')}
                   variant="outline"
+                  size="sm"
+                  className="text-xs sm:text-sm"
                 >
-                  <Plus className="mr-2 h-4 w-4" />
+                  <Plus className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   Новий кошторис
                 </Button>
                 <Button 
                   onClick={handleSignOut}
                   variant="outline"
-                  className="text-red-600 hover:text-red-700"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 text-xs sm:text-sm"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   Вийти
                 </Button>
               </div>
@@ -236,65 +239,68 @@ const Profile = () => {
 
         {/* Estimates List */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="mr-3 h-6 w-6" />
+          <CardHeader className="p-3 sm:p-6">
+            <CardTitle className="flex items-center text-lg sm:text-xl">
+              <FileText className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
               Мої кошториси
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 sm:p-6">
             {loading ? (
-              <p className="text-center py-8">Завантаження...</p>
+              <p className="text-center py-8 text-sm">Завантаження...</p>
             ) : estimates.length === 0 ? (
-              <div className="text-center py-12">
-                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg mb-4">У вас поки немає збережених кошторисів</p>
-                <Button onClick={() => navigate('/')}>
+              <div className="text-center py-8 sm:py-12">
+                <FileText className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 text-sm sm:text-lg mb-4">У вас поки немає збережених кошторисів</p>
+                <Button onClick={() => navigate('/')} size="sm">
                   <Plus className="mr-2 h-4 w-4" />
                   Створити перший кошторис
                 </Button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {estimates.map((estimate) => (
-                  <div key={estimate.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{estimate.title}</h3>
-                      <p className="text-sm text-gray-600">
+                  <div key={estimate.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-gray-50 rounded-lg space-y-3 sm:space-y-0">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-gray-900 text-sm sm:text-base truncate">{estimate.title}</h3>
+                      <p className="text-xs sm:text-sm text-gray-600">
                         Створено: {new Date(estimate.created_at).toLocaleDateString('uk-UA')}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600">
                         Регіон: {estimate.region_id}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <span className="text-lg font-semibold text-blue-600">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                      <span className="text-base sm:text-lg font-semibold text-blue-600">
                         {formatCurrency(estimate.total_cost)}
                       </span>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 sm:space-x-2 w-full sm:w-auto">
                         <Button
                           onClick={() => editEstimate(estimate)}
                           variant="outline"
                           size="sm"
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 flex-1 sm:flex-initial text-xs px-2 py-1"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-3 w-3" />
+                          <span className="ml-1 sm:hidden">Редагувати</span>
                         </Button>
                         <Button
                           onClick={() => downloadEstimate(estimate)}
                           variant="outline"
                           size="sm"
-                          className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                          className="text-green-600 hover:text-green-700 hover:bg-green-50 flex-1 sm:flex-initial text-xs px-2 py-1"
                         >
-                          <Download className="h-4 w-4" />
+                          <Download className="h-3 w-3" />
+                          <span className="ml-1 sm:hidden">Завантажити</span>
                         </Button>
                         <Button
                           onClick={() => deleteEstimate(estimate.id)}
                           variant="ghost"
                           size="sm"
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 flex-1 sm:flex-initial text-xs px-2 py-1"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3 w-3" />
+                          <span className="ml-1 sm:hidden">Видалити</span>
                         </Button>
                       </div>
                     </div>
