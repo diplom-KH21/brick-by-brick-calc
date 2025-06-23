@@ -99,10 +99,10 @@ const EstimateTable = forwardRef<HTMLDivElement, EstimateTableProps>(
               <div className="flex justify-center mt-6">
                 <Button 
                   onClick={onGeneratePDF}
-                  size="lg"
-                  className="bg-blue-600 hover:bg-blue-700"
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-sm px-4 py-2"
                 >
-                  <Download className="mr-2 h-5 w-5" />
+                  <Download className="mr-2 h-4 w-4" />
                   Завантажити кошторис у форматі PDF
                 </Button>
               </div>
