@@ -35,7 +35,7 @@ const ScrollToTop = () => {
   return (
     <Button
       onClick={scrollToTop}
-      className="fixed bottom-6 right-6 z-40 rounded-full w-12 h-12 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
+      className="fixed bottom-6 right-6 z-30 rounded-full w-12 h-12 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
       size="icon"
     >
       <ArrowUp className="h-5 w-5" />

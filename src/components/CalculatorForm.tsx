@@ -34,6 +34,7 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
   const [showEstimate, setShowEstimate] = useState(false);
   const [editingEstimateId, setEditingEstimateId] = useState<string | null>(null);
   const [editDataLoaded, setEditDataLoaded] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const { prices, getPriceByServiceId, loading: pricesLoading } = usePrices();
@@ -42,6 +43,22 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
 
   const currentRegion = regions.find(r => r.id === selectedRegion);
   const priceMultiplier = currentRegion?.priceMultiplier || 1.0;
+
+  // Отслеживание позиции скролла для определения, находится ли пользователь внизу
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      
+      // Считаем, что пользователь внизу, если он находится в пределах 100px от конца страницы
+      const isNearBottom = scrollTop + windowHeight >= documentHeight - 100;
+      setIsAtBottom(isNearBottom);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Функция для пересчета стоимости
   const recalculateTotal = (services: Record<string, number>, multiplier: number) => {
@@ -257,9 +274,9 @@ const CalculatorForm = ({ editData }: CalculatorFormProps) => {
         </div>
       </div>
 
-      {/* Mobile sticky estimate button */}
-      {totalCost > 0 && !showEstimate && (
-        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-30">
+      {/* Mobile sticky estimate button - показываем когда есть стоимость и пользователь не внизу */}
+      {totalCost > 0 && !isAtBottom && (
+        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-20">
           <Button 
             onClick={handleGenerateEstimate}
             className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg text-xs py-2.5"
